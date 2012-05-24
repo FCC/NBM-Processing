@@ -1,0 +1,140 @@
+
+* -----------------------------------------------------------------------------
+* Data Submission Reciept
+* CheckSBDDSubmission.py
+* Created on: 3/14/2011
+* Created by: DE
+* State Broadband Data Development Program
+* NTIA / FCC
+* -----------------------------------------------------------------------------
+
+*******************************************************************************
+*****                                                                     *****
+*****                                                                     *****
+*****                         Submission Reciept File                     *****
+*****                     Check below for any FAILED Statements           *****
+*****                                                                     *****
+*****                                                                     *****
+*******************************************************************************
+
+*Check Layer: LastMile
+      Geometry PASSED:  Layer has 0 records. 
+      Field Check:     passed      LastMile_PROVNAME values are good 
+      Field Check:     passed      LastMile_DBANAME values are good 
+      Field Check:     passed      LastMile_FRN values are good 
+      Field Check:     passed      LastMile_OWNERSHIP values are good 
+      Field Check:     passed      LastMile_BHCAPACITY values are good 
+      Field Check:     passed      LastMile_BHTYPE values are good 
+      Field Check:     passed      LastMile_LATITUDE values are good 
+      Field Check:     passed      LastMile_LONGITUDE values are good 
+      Field Check:     passed      LastMile_STATEABBR values are good 
+      Field Check:     passed      LastMile_FULLFIPSID values are good 
+
+*Check Layer: MiddleMile
+      Geometry PASSED:  Layer has 28 records. 
+      Field Check:     passed      MiddleMile_PROVNAME values are good 
+      Field Check:     FAILED      MiddleMile_DBANAME has UNEXPECTED VALUES 
+      Field Check:     passed      MiddleMile_FRN values are good 
+      Field Check:     FAILED      MiddleMile_OWNERSHIP has UNEXPECTED VALUES 
+      Field Check:     passed      MiddleMile_BHCAPACITY values are good 
+      Field Check:     passed      MiddleMile_BHTYPE values are good 
+      Field Check:     passed      MiddleMile_LATITUDE values are good 
+      Field Check:     passed      MiddleMile_LONGITUDE values are good 
+      Field Check:     passed      MiddleMile_STATEABBR values are good 
+      Field Check:     passed      MiddleMile_FULLFIPSID values are good 
+
+*Check Layer: Address
+      Geometry PASSED:  Layer has 43856 records. 
+      Field Check:     passed      Address_PROVNAME values are good 
+      Field Check:     passed      Address_DBANAME values are good 
+      Field Check:     passed      Address_PROVIDER_TYPE values are good 
+      Field Check:     passed      Address_FRN values are good 
+      Field Check:     passed      Address_ADDRESS values are good 
+      Field Check:     passed      Address_BLDGNBR values are good 
+      Field Check:     passed      Address_STREETNAME values are good 
+      Field Check:     passed      Address_CITY values are good 
+      Field Check:     passed      Address_STATECODE values are good 
+      Field Check:     FAILED      Address_ZIP5 has UNEXPECTED VALUES 
+      Field Check:     FAILED      Address_LATITUDE has UNEXPECTED VALUES 
+      Field Check:     FAILED      Address_LONGITUDE has UNEXPECTED VALUES 
+      Field Check:     passed      Address_ENDUSERCAT values are good 
+      Field Check:     FAILED      Address_TRANSTECH has UNEXPECTED VALUES 
+      Field Check:     passed      Address_MAXADDOWN values are good 
+      Field Check:     passed      Address_MAXADUP values are good 
+      Field Check:     passed      Address_SpeedNotBB values are good 
+      Field Check:     passed      Address_OneSpeedAndNotTheOther values are good 
+      Field Check:     passed      Address_FULLFIPSID values are good 
+
+*Check Layer: CAInstitutions
+      Geometry PASSED:  Layer has 649 records. 
+      Field Check:     passed      CAInstitutions_ANCHORNAME values are good 
+      Field Check:     passed      CAInstitutions_ADDRESS values are good 
+      Field Check:     passed      CAInstitutions_BLDGNBR values are good 
+      Field Check:     passed      CAInstitutions_STREETNAME values are good 
+      Field Check:     passed      CAInstitutions_CITY values are good 
+      Field Check:     passed      CAInstitutions_STATECODE values are good 
+      Field Check:     passed      CAInstitutions_ZIP5 values are good 
+      Field Check:     passed      CAInstitutions_CAICAT values are good 
+      Field Check:     FAILED      CAInstitutions_BBSERVICE has UNEXPECTED VALUES 
+      Field Check:     passed      CAInstitutions_TRANSTECH values are good 
+      Field Check:     passed      CAInstitutions_MAXADDOWN values are good 
+      Field Check:     passed      CAInstitutions_MAXADUP values are good 
+      Field Check:     passed      CAInstitutions_SpeedNotBB values are good 
+      Field Check:     passed      CAInstitutions_OneSpeedAndNotTheOther values are good 
+      Field Check:     passed      CAInstitutions_FULLFIPSID values are good 
+
+*Check Layer: CensusBlock
+      Field Check:     passed      CensusBlock_PROVNAME values are good 
+      Field Check:     passed      CensusBlock_DBANAME values are good 
+      Field Check:     passed      CensusBlock_PROVIDER_TYPE values are good 
+      Field Check:     passed      CensusBlock_FRN values are good 
+      Field Check:     FAILED      CensusBlock_STATEFIPS has UNEXPECTED VALUES 
+      Field Check:     passed      CensusBlock_COUNTYFIPS values are good 
+      Field Check:     passed      CensusBlock_TRACT values are good 
+      Field Check:     FAILED      CensusBlock_BLOCKID has UNEXPECTED VALUES 
+      Field Check:     passed      CensusBlock_FULLFIPSID values are good 
+      Field Check:     FAILED      CensusBlock_TRANSTECH has UNEXPECTED VALUES 
+      Field Check:     passed      CensusBlock_MAXADDOWN values are good 
+      Field Check:     passed      CensusBlock_MAXADUP values are good 
+      Field Check:     passed      CensusBlock_SpeedNotBB values are good 
+      Field Check:     passed      CensusBlock_OneSpeedAndNotTheOther values are good 
+      Speed Tier:      FAILED      Go check data and keep only Maximum Advertised Speeds 
+
+*Check Layer: Overview
+      Geometry PASSED:  Layer has 57 records. 
+      Field Check:     passed      Overview_PROVNAME values are good 
+      Field Check:     passed      Overview_DBANAME values are good 
+      Field Check:     FAILED      Overview_FRN has UNEXPECTED VALUES 
+      Field Check:     passed      Overview_GEOUNITTYPE values are good 
+      Field Check:     FAILED      Overview_STATECOUNTYFIPS has UNEXPECTED VALUES 
+      Field Check:     FAILED      Overview_TRANSTECH has UNEXPECTED VALUES 
+      Field Check:     passed      Overview_MAXADDOWN values are good 
+      Field Check:     passed      Overview_MAXADUP values are good 
+      Field Check:     passed      Overview_SpeedNotBB values are good 
+      Field Check:     passed      Overview_OneSpeedAndNotTheOther values are good 
+      Field Check:     passed      Overview_STATEABBR values are good 
+
+*Check Layer: RoadSegment
+      Geometry PASSED:  Layer has 17217 records. 
+      Field Check:     passed      RoadSegment_PROVNAME values are good 
+      Field Check:     passed      RoadSegment_DBANAME values are good 
+      Field Check:     passed      RoadSegment_PROVIDER_TYPE values are good 
+      Field Check:     FAILED      RoadSegment_FRN has UNEXPECTED VALUES 
+      Field Check:     passed      RoadSegment_STATE values are good 
+      Field Check:     FAILED      RoadSegment_TRANSTECH has UNEXPECTED VALUES 
+      Field Check:     passed      RoadSegment_MAXADDOWN values are good 
+      Field Check:     passed      RoadSegment_MAXADUP values are good 
+      Field Check:     passed      RoadSegment_SpeedNotBB values are good 
+      Field Check:     passed      RoadSegment_OneSpeedAndNotTheOther values are good 
+
+*Check Layer: Wireless
+      Geometry PASSED:  Layer has 13 records. 
+      Field Check:     passed      Wireless_PROVNAME values are good 
+      Field Check:     passed      Wireless_DBANAME values are good 
+      Field Check:     passed      Wireless_FRN values are good 
+      Field Check:     passed      Wireless_TRANSTECH values are good 
+      Field Check:     passed      Wireless_MAXADDOWN values are good 
+      Field Check:     passed      Wireless_MAXADUP values are good 
+      Field Check:     passed      Wireless_SpeedNotBB values are good 
+      Field Check:     passed      Wireless_OneSpeedAndNotTheOther values are good 
+      Field Check:     passed      Wireless_STATEABBR values are good 
