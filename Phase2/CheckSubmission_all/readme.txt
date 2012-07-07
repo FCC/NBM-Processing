@@ -1,18 +1,16 @@
-\NBM-Processing\Phase1\CheckSubmission
-July 7, 2012
+\NBM-Processing\Phase2\Checksubmission_all
+May 24, 2011
+- Updated July 6, 2012
 
-This directory contains the script which create the reciept file
+This directory contains the scripts which create the reciept file
 The script is run off of the delivered file geodatabases.
-- SBDD_CheckSubmission.py
+- SBDD_CreateSpatialLayers.py
 
 ##Arguments
 theFD = sys.argv[1]  #theFeatureDataSet 
-					 #e.g. C:\SBDD_Fall\DE\BB_Map_FGB_DE.gdb\NATL_Broadband_Map
+					 #e.g. C:\Users\SBDD_Fall\DE\BB_Map_FGB_DE.gdb\NATL_Broadband_Map
 theST = sys.argv[2]  #theState e.g. DE
 theOF = sys.argv[3]  #theOutputFolder e.g. C:\Users\transfer\SBDD_Fall\DE
-theCheckList = sys.argv[4] #controls running individual or all feature classes
-						   #All, Block, Address, Road, Wireless, CAI, 
-						   #Overview, LastMile, MiddleMile
 
 ##global variables
 myFlag = 0
@@ -29,15 +27,14 @@ Running the tool
 	and validate geometry tools.  This script might take a long time due to the volume 
 	of data in your submission.
 
-- The arguments to run the script are; (a) the feature dataset inside the trasfer data 
-	model; (b) the two letter state abbreviation for your state/district/territory; 
-	(c) the output folder for the receipt; (d) a value for running all or individual 
-	tables to check
+- The arguments to run the script are; (a) the feature dataset inside the transfer 
+	data model; (b) the two letter state abbreviation for your state/district/territory; 
+	(c) the output folder for the reciept
 
-- The script runs a series of logic checks (see SBDD_Reciept_Overview_v1.xls) and 
-	outputs a file named: <output_folder><state_abbreviation>_<year>_<month>_<day>.txt 
-	(e.g. c:/users/DE_2001_3_14.txt).  This text file contains the results of the 
-	checks run by the script.  The results of the submission are in this text file.
+- The script runs a series of logic checks (see SBDD_Reciept_Overview_v1.xls) 
+	and outputs a file named: <output_folder><state_abbreviation>_<year>_<month>_<day>.txt
+	(e.g. c:/users/DE_2001_3_14.txt).  This text file contains the results of the checks 
+	run by the script.  The results of the submission are in this text file.
 
 - You will need to check this script for any 'FAILED' printed results.  A FAILED 
 	result means there are unexpected values in your data submission.  You will need 
@@ -51,10 +48,10 @@ NOTES:
 	MIGHT CHANGE RECORD NUMBERS, GEOMETRY AND/OR FEATURES ON YOUR DATA.  WE ARE RUNNING 
 	THIS DUE TO THE LARGE VOLUME OF NON-VALID GEOMETRIES SUBMITTED IN PAST SUBMISSION.  
 	IT IS A BEST PRACTICE TO RUN THESE TOOLS INDIVIDUALLY ON SAMPLE DATA PRIOR TO 
-	RUNNING THE CHECKSUBMISSION TOOL SO YOU ARE FAMILIAR WITH GEOMETRY ISSUES CONTAINED 
+	RUNNING THE CHECKSUBMISSION TOOL SO YOU ARE FAMILIAR WITH GEOMETRY ISSUES  CONTAINED 
 	IN YOUR SUBMISSION.
 
-- THIS TOOL REQUIRES AN ARCEDIT LICENSE TO RUN.  
+- THIS TOOL REQUIRES AN ARCINFO LICENSE TO RUN.  
 
 - THIS TOOL WAS CREATED AND TESTED IN ARCGIS 10.0
 

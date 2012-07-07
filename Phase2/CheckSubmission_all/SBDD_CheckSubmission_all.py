@@ -55,59 +55,22 @@ from os import remove, close
 today = date.today()
 
 #acquire arguments
-theFD = sys.argv[1]  #theFeatureDataSet eg C:\Users\DE.gdb\NATL_Broadband_Map
-theST = sys.argv[2]  #theState e.g. DE
-theOF = sys.argv[3]  #theOutputFolder eg C:\Users\transfer\SBDD_Fall\DE
-theCheckList = sys.argv[4] #controls running individual or all feature classes
-                           #default is All.  other options are Block, Address
-                           #Road, Wireless, CAI, Overview, MiddleMile, LastMile
+theLocation = "C:/Users/NBMSource/Spring2012/"
+theYear = "2012"
+theMonth = "04"
+theDay = "01"
 
-##example variable lists
-##theFD = "C:/Users/NBMSource/Spring2012/WY/WY_SBDD_2012_04_01.gdb/NATL_Broadband_Map"
-##theST = "WY"
-##theOF = "C:/Users/"
-##theCheckList = "All"
+States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
+States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
+States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3 
+States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4 
+States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
+States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
+States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+States = ["AS","VI"]
 
 #set up variables
 myFlag = 0
-
-#Create Reciept
-try:
-    theYear = today.year
-    theMonth = today.month
-    theDay = today.day
-
-    #set up output file
-    outFile = theOF + "/" + theST + "_" + str(theYear) + "_" + str(theMonth) + "_" + str(theDay) + ".txt"
-    myFile = open(outFile, 'w')
-    myFile.write("" + "\n")
-    myFile.write("* -----------------------------------------------------------------------------" + "\n")
-    myFile.write("* Data Submission Reciept" + "\n")
-    myFile.write("* CheckSBDDSubmission.py" + "\n")
-    myFile.write("* Created on: " + str(theMonth) + "/" + str(theDay) + "/" + str(theYear) + "\n") #   
-    myFile.write("* Created by: " + theST + "\n")  ###investigate getting who out of the metadata
-    myFile.write("* State Broadband Data Development Program" + "\n")
-    myFile.write("* NTIA / FCC" + "\n")
-    myFile.write("* -----------------------------------------------------------------------------" + "\n")
-    myFile.write("" + "\n")
-    myFile.write("*******************************************************************************" + "\n")
-    myFile.write("*****                                                                     *****" + "\n")
-    myFile.write("*****                                                                     *****" + "\n")
-    myFile.write("*****                     Submission Reciept File  v3v                    *****" + "\n")
-    myFile.write("*****                     Check below for any FAILED Statements           *****" + "\n")
-    myFile.write("*****  Check below for any WARNEING Statements and if so describe why     *****" + "\n")
-    myFile.write("*****                                                                     *****" + "\n")
-    myFile.write("*******************************************************************************" + "\n")
-    myFile.close()
-    del theDay, theMonth, theYear
-except:
-    arcpy.AddMessage(arcpy.GetMessage(0))
-    arcpy.AddMessage(arcpy.GetMessage(1))
-    arcpy.AddMessage(arcpy.GetMessage(2))
-    theMsg = "Something bad happened during the writing of the reciept;"
-    theMsg = theMsg + "please re-run" 
-    arcpy.AddMessage(theMsg)
-    del theMsg
 
 #write out functions
 #Function sbdd_qry creates a layer from a query and determines if the 
@@ -169,7 +132,7 @@ def sbdd_SpeedTier(myFL):
         arcpy.Delete_management(theFGDB + "/Speed_FRQ")
     arcpy.Statistics_analysis(theFD + "/BB_Service_" + myFL, theFGDB + \
                               "/Speed_FRQ", [["FRN", "COUNT"]], ["FRN", "FULLFIPSID", "TRANSTECH","EndUserCat"]) 
-    theTblView = "myView" + myFL + "SpeedTier"
+    theTblView = "myView" + theST + myFL + "SpeedTier"
     arcpy.MakeTableView_management(theFGDB + "/Speed_FRQ", theTblView,
                                    "FREQUENCY > 1")
     if (int(arcpy.GetCount_management(theTblView).getOutput(0)) > 0):
@@ -354,299 +317,335 @@ def sbdd_qryDef (myField):
         theQry = theQry + " (MAXADDOWN = ''  AND MAXADUP IS NOT NULL)"
     return(theQry)
 
-#set the stFIPS
-stFIPS = "0"
-if theST == "AK":
-    stFIPS = '02'
-if theST == "AL":
-    stFIPS = '01'
-if theST == "AR":
-    stFIPS = '05'
-if theST == "AS":
-    stFIPS = '60'
-if theST == "AZ":
-    stFIPS = '04'
-if theST == "CA":
-    stFIPS = '06'
-if theST == "CO":
-    stFIPS = '08'
-if theST == "CT":
-    stFIPS = '09'
-if theST == "DC":
-    stFIPS = '11'
-if theST == "DE":
-    stFIPS = '10'
-if theST == "FL":
-    stFIPS = '12'
-if theST == "GA":
-    stFIPS = '13'
-if theST == "GU":
-    stFIPS = '66'
-if theST == "HI":
-    stFIPS = '15'
-if theST == "IA":
-    stFIPS = '19'
-if theST == "ID":
-    stFIPS = '16'
-if theST == "IL":
-    stFIPS = '17'
-if theST == "IN":
-    stFIPS = '18'
-if theST == "KS":
-    stFIPS = '20'
-if theST == "KY":
-    stFIPS = '21'
-if theST == "LA":
-    stFIPS = '22'
-if theST == "MA":
-    stFIPS = '25'
-if theST == "MD":
-    stFIPS = '24'
-if theST == "ME":
-    stFIPS = '23'
-if theST == "MP":
-    stFIPS = '69'
-if theST == "MI":
-    stFIPS = '26'
-if theST == "MN":
-    stFIPS = '27'
-if theST == "MO":
-    stFIPS = '29'
-if theST == "MS":
-    stFIPS = '28'
-if theST == "MT":
-    stFIPS = '30'
-if theST == "NC":
-    stFIPS = '37'
-if theST == "ND":
-    stFIPS = '38'
-if theST == "NE":
-    stFIPS = '31'
-if theST == "NH":
-    stFIPS = '33'
-if theST == "NJ":
-    stFIPS = '34'
-if theST == "NM":
-    stFIPS = '35'
-if theST == "NV":
-    stFIPS = '32'
-if theST == "NY":
-    stFIPS = '36'
-if theST == "OH":
-    stFIPS = '39'
-if theST == "OK":
-    stFIPS = '40'
-if theST == "OR":
-    stFIPS = '41'
-if theST == "PA":
-    stFIPS = '42'
-if theST == "PR":
-    stFIPS = '72'
-if theST == "RI":
-    stFIPS = '44'
-if theST == "SC":
-    stFIPS = '45'
-if theST == "SD":
-    stFIPS = '46'
-if theST == "TN":
-    stFIPS = '47'
-if theST == "TX":
-    stFIPS = '48'
-if theST == "UT":
-    stFIPS = '49'
-if theST == "VA":
-    stFIPS = '51'
-if theST == "VI":
-    stFIPS = '78'
-if theST == "VT":
-    stFIPS = '50'
-if theST == "WA":
-    stFIPS = '53'
-if theST == "WI":
-    stFIPS = '55'
-if theST == "WV":
-    stFIPS = '54'
-if theST == "WY":
-    stFIPS = '56'
-if stFIPS == "0":
-    theMsg = "You likely did not enter a valid two letter state abbreviation,"
-    theMsg = theMsg + "please run again"
-    arcpy.addmessage(theMsg)
-    del theMsg
+#sbdd_qryDef writes out the definitions for the queries,
+#since these are used multiple times
+def sbdd_setFIPS (myST):
+    #set the stFIPS
+    stFIPS = "0"
+    if theST == "AK":
+        stFIPS = '02'
+    if theST == "AL":
+        stFIPS = '01'
+    if theST == "AR":
+        stFIPS = '05'
+    if theST == "AS":
+        stFIPS = '60'
+    if theST == "AZ":
+        stFIPS = '04'
+    if theST == "CA":
+        stFIPS = '06'
+    if theST == "CO":
+        stFIPS = '08'
+    if theST == "CT":
+        stFIPS = '09'
+    if theST == "DC":
+        stFIPS = '11'
+    if theST == "DE":
+        stFIPS = '10'
+    if theST == "FL":
+        stFIPS = '12'
+    if theST == "GA":
+        stFIPS = '13'
+    if theST == "GU":
+        stFIPS = '66'
+    if theST == "HI":
+        stFIPS = '15'
+    if theST == "IA":
+        stFIPS = '19'
+    if theST == "ID":
+        stFIPS = '16'
+    if theST == "IL":
+        stFIPS = '17'
+    if theST == "IN":
+        stFIPS = '18'
+    if theST == "KS":
+        stFIPS = '20'
+    if theST == "KY":
+        stFIPS = '21'
+    if theST == "LA":
+        stFIPS = '22'
+    if theST == "MA":
+        stFIPS = '25'
+    if theST == "MD":
+        stFIPS = '24'
+    if theST == "ME":
+        stFIPS = '23'
+    if theST == "MP":
+        stFIPS = '69'
+    if theST == "MI":
+        stFIPS = '26'
+    if theST == "MN":
+        stFIPS = '27'
+    if theST == "MO":
+        stFIPS = '29'
+    if theST == "MS":
+        stFIPS = '28'
+    if theST == "MT":
+        stFIPS = '30'
+    if theST == "NC":
+        stFIPS = '37'
+    if theST == "ND":
+        stFIPS = '38'
+    if theST == "NE":
+        stFIPS = '31'
+    if theST == "NH":
+        stFIPS = '33'
+    if theST == "NJ":
+        stFIPS = '34'
+    if theST == "NM":
+        stFIPS = '35'
+    if theST == "NV":
+        stFIPS = '32'
+    if theST == "NY":
+        stFIPS = '36'
+    if theST == "OH":
+        stFIPS = '39'
+    if theST == "OK":
+        stFIPS = '40'
+    if theST == "OR":
+        stFIPS = '41'
+    if theST == "PA":
+        stFIPS = '42'
+    if theST == "PR":
+        stFIPS = '72'
+    if theST == "RI":
+        stFIPS = '44'
+    if theST == "SC":
+        stFIPS = '45'
+    if theST == "SD":
+        stFIPS = '46'
+    if theST == "TN":
+        stFIPS = '47'
+    if theST == "TX":
+        stFIPS = '48'
+    if theST == "UT":
+        stFIPS = '49'
+    if theST == "VA":
+        stFIPS = '51'
+    if theST == "VI":
+        stFIPS = '78'
+    if theST == "VT":
+        stFIPS = '50'
+    if theST == "WA":
+        stFIPS = '53'
+    if theST == "WI":
+        stFIPS = '55'
+    if theST == "WV":
+        stFIPS = '54'
+    if theST == "WY":
+        stFIPS = '56'
+    if stFIPS == "0":
+        theMsg = "You likely did not enter a valid two letter state abbreviation,"
+        theMsg = theMsg + "please run again"
+        arcpy.addmessage(theMsg)
+        del theMsg
+    return(stFIPS)
 
-if theCheckList == "All" or theCheckList == "Block":
-    #check for BB_Service_CensusBlock
-    theLyr = "CensusBlock"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Fail")	
-    myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
-                "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
-                "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
-                "Flag_TT41_MAD9","Flag_TT41_MAD10"]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Warn")
-    myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "STATEFIPS", "COUNTYFIPS",
-                "TRACT", "BLOCKID", "BLOCKSUBGROUP", "FULLFIPSID", "OneSpeedAndNotTheOther"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFlag = myFlag + sbdd_SpeedTier(theLyr)
-    myFile.close()
+try: 
+    for theST in States:
+        arcpy.AddMessage("the state is: " + theST)
+        ##check to see if field is added, if not add it
+        ##populate field
+        theFD =  theLocation + theST + "/" + theST + "_SBDD_" + theYear + "_"
+        theFD = theFD + theMonth + "_" + theDay + ".gdb/NATL_Broadband_Map"
+        thisYear = today.year
+        thisMonth = today.month
+        thisDay = today.day
+        #set up output file
+        outFile = theLocation + "/" + theST + "_" + str(thisYear) + "_" + str(thisMonth) + "_" + str(thisDay) + ".txt"
+        myFile = open(outFile, 'w')
+        myFile.write("" + "\n")
+        myFile.write("* -----------------------------------------------------------------------------" + "\n")
+        myFile.write("* Data Submission Reciept" + "\n")
+        myFile.write("* CheckSBDDSubmission.py" + "\n")
+        myFile.write("* Created on: " + str(theMonth) + "/" + str(theDay) + "/" + str(theYear) + "\n") #   
+        myFile.write("* Created by: " + theST + "\n")  ###investigate getting who out of the metadata
+        myFile.write("* State Broadband Data Development Program" + "\n")
+        myFile.write("* NTIA / FCC" + "\n")
+        myFile.write("* -----------------------------------------------------------------------------" + "\n")
+        myFile.write("" + "\n")
+        myFile.write("*******************************************************************************" + "\n")
+        myFile.write("*****                                                                     *****" + "\n")
+        myFile.write("*****                                                                     *****" + "\n")
+        myFile.write("*****                     Submission Reciept File  v3v                    *****" + "\n")
+        myFile.write("*****                     Check below for any FAILED Statements           *****" + "\n")
+        myFile.write("*****  Check below for any WARNEING Statements and if so describe why     *****" + "\n")
+        myFile.write("*****                                                                     *****" + "\n")
+        myFile.write("*******************************************************************************" + "\n")
+        myFile.close()
+        del thisDay, thisMonth, thisYear
 
-if theCheckList == "All" or theCheckList == "Address":
-    #check for BB_Service_Address
-    theLyr = "Address"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Fail")	
-    myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
-                "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
-                "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
-                "Flag_TT41_MAD9","Flag_TT41_MAD10"]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Warn")
-    myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "ADDRESS" , "BLDGNBR",
-                "STREETNAME", "CITY", "STATECODE", "ZIP5", "LATITUDE", "LONGITUDE",
-                "ENDUSERCAT", "FULLFIPSID", "OneSpeedAndNotTheOther"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
-
-if theCheckList == "All" or theCheckList == "Road":
-    #check for BB_Service_RoadSegement
-    theLyr = "RoadSegment"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Fail")	
-    myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
-                "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
-                "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
-                "Flag_TT41_MAD9","Flag_TT41_MAD10"]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Warn")
-    myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "OneSpeedAndNotTheOther"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
-
-if theCheckList == "All" or theCheckList == "Wireless":
-    #check for BB_Service_Wireless
-    theLyr = "Wireless"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["WireLessTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Fail")	
-    myChecks = ["Flag_TT70_MAD7","Flag_TT70_MAD8","Flag_TT70_MAD9","Flag_TT70_MAD10","Flag_TT70_MAD11",
-                "Flag_TT70_MAU7","Flag_TT70_MAU8","Flag_TT70_MAU9","Flag_TT70_MAU10",
-                "Flag_TT70_MAU11","Flag_TT71_MAD7","Flag_TT71_MAD8","Flag_TT71_MAD9",
-                "Flag_TT71_MAD10","Flag_TT71_MAD11","Flag_TT80_MAD7"]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Warn")
-    myChecks = ["PROVNAME", "DBANAME", "FRN", "STATEABBR", "SPECTRUM"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
-
-if theCheckList == "All" or theCheckList == "CAI":
-    #check for BB_Service_CAInstitutions
-    theLyr = "CAInstitutions"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["CAITRANSTECH"]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                        myCheck, sbdd_qryDef(myCheck), "Warn")
-    myChecks = ["ANCHORNAME", "ADDRESS", "BLDGNBR", "STREETNAME", "CITY" , "STATECODE",
-                "ZIP5", "CAICAT", "BBSERVICE", "DBANAME", "FULLFIPSID"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
-
-if theCheckList == "All" or theCheckList == "Overview":
-    #check for BB_Service_Overview
-    theLyr = "Overview"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_Service_", theLyr)
-    myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ]
-    for myCheck in myChecks:
-            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
+        #set the stateFIPS number
+        stFIPS = sbdd_setFIPS (theST)
+        #check for BB_Service_CensusBlock
+        theLyr = "CensusBlock"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")             
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Fail")	 
+        myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
+                    "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
+                    "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
+                    "Flag_TT41_MAD9","Flag_TT41_MAD10"]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Warn")
+        myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "STATEFIPS", "COUNTYFIPS",
+                    "TRACT", "BLOCKID", "BLOCKSUBGROUP", "FULLFIPSID", "OneSpeedAndNotTheOther"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
                                         myCheck, sbdd_qryDef(myCheck), "Fail")
-    myChecks = ["PROVNAME", "DBANAME", "FRN", "GEOUNITTYPE" , "STATECOUNTYFIPS",
-                "STATEABBR", "CITY", "STATECODE", "ZIP5", "LATITUDE", "LONGITUDE",
-                "ENDUSERCAT", "FULLFIPSID", "OneSpeedAndNotTheOther"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
+        myFlag = myFlag + sbdd_SpeedTier(theLyr)
+        myFile.close()
 
-if theCheckList == "All" or theCheckList == "LastMile":
-    #check for BB_ConnectionPoint_LastMile
-    theLyr = "LastMile"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_ConnectionPoint_", theLyr)
-    myChecks = ["PROVNAME", "DBANAME", "FRN", "OWNERSHIP" , "BHCAPACITY",
-                "BHTYPE", "LATITUDE", "LONGITUDE", "ELEVFEET", "STATEABBR", "FULLFIPSID"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_ConnectionPoint_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
+        #check for BB_Service_Address
+        theLyr = "Address"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Fail")	
+        myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
+                    "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
+                    "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
+                    "Flag_TT41_MAD9","Flag_TT41_MAD10"]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Warn")
+        myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "ADDRESS" , "BLDGNBR",
+                    "STREETNAME", "CITY", "STATECODE", "ZIP5", "LATITUDE", "LONGITUDE",
+                    "ENDUSERCAT", "FULLFIPSID", "OneSpeedAndNotTheOther"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
 
-if theCheckList == "All" or theCheckList == "MiddleMile":
-    #check for BB_ConnectionPoint_MiddleMile
-    theLyr = "MiddleMile"
-    arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
-    myFile = open(outFile, 'a')
-    myFile.write("" + "\n")
-    myFile.write("*Check Layer: " + theLyr + "\n")            
-    sbdd_checkGeometry("/BB_ConnectionPoint_", theLyr)
-    myChecks = ["PROVNAME", "DBANAME", "FRN", "BHCAPACITY",
-                "BHTYPE", "LATITUDE", "LONGITUDE", "STATEABBR", "FULLFIPSID"]
-    for myCheck in myChecks:
-        myFlag = myFlag + sbdd_qry (theFD + "/BB_ConnectionPoint_" + theLyr, theLyr + "_" +
-                                    myCheck, sbdd_qryDef(myCheck), "Fail")
-    myFile.close()
+        #check for BB_Service_RoadSegement
+        theLyr = "RoadSegment"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Fail")	
+        myChecks = ["Flag_TT10_MAD7","Flag_TT10_MAD8","Flag_TT10_MAD9","Flag_TT10_MAD10",
+                    "Flag_TT10_MAD11","Flag_TT40_MAD3","Flag_TT40_MAD4","Flag_TT40_MAD5",
+                    "Flag_TT40_MAD6","Flag_TT40_MAD7","Flag_TT40_MAD8","Flag_TT41_MAD8",
+                    "Flag_TT41_MAD9","Flag_TT41_MAD10"]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Warn")
+        myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "OneSpeedAndNotTheOther"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
 
+        #check for BB_Service_Wireless
+        theLyr = "Wireless"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["WireLessTRANSTECH", "MaxAdDown", "MaxAdUp" ] #Fail queries
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Fail")	
+        myChecks = ["Flag_TT70_MAD7","Flag_TT70_MAD8","Flag_TT70_MAD9","Flag_TT70_MAD10","Flag_TT70_MAD11",
+                    "Flag_TT70_MAU7","Flag_TT70_MAU8","Flag_TT70_MAU9","Flag_TT70_MAU10",
+                    "Flag_TT70_MAU11","Flag_TT71_MAD7","Flag_TT71_MAD8","Flag_TT71_MAD9",
+                    "Flag_TT71_MAD10","Flag_TT71_MAD11","Flag_TT80_MAD7"]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Warn")
+        myChecks = ["PROVNAME", "DBANAME", "FRN", "STATEABBR", "SPECTRUM"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
+
+        #check for BB_Service_CAInstitutions
+        theLyr = "CAInstitutions"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["CAITRANSTECH"]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Warn")
+        myChecks = ["ANCHORNAME", "ADDRESS", "BLDGNBR", "STREETNAME", "CITY" , "STATECODE",
+                    "ZIP5", "CAICAT", "BBSERVICE", "DBANAME", "FULLFIPSID"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
+
+
+        #check for BB_Service_Overview
+        theLyr = "Overview"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_Service_", theLyr)
+        myChecks = ["WiredTRANSTECH", "MaxAdDown", "MaxAdUp" ]
+        for myCheck in myChecks:
+                myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                            myCheck, sbdd_qryDef(myCheck), "Fail")
+        myChecks = ["PROVNAME", "DBANAME", "FRN", "GEOUNITTYPE" , "STATECOUNTYFIPS",
+                    "STATEABBR", "CITY", "STATECODE", "ZIP5", "LATITUDE", "LONGITUDE",
+                    "ENDUSERCAT", "FULLFIPSID", "OneSpeedAndNotTheOther"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
+
+
+        #check for BB_ConnectionPoint_LastMile
+        theLyr = "LastMile"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_ConnectionPoint_", theLyr)
+        myChecks = ["PROVNAME", "DBANAME", "FRN", "OWNERSHIP" , "BHCAPACITY",
+                    "BHTYPE", "LATITUDE", "LONGITUDE", "ELEVFEET", "STATEABBR", "FULLFIPSID"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_ConnectionPoint_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
+
+        #check for BB_ConnectionPoint_MiddleMile
+        theLyr = "MiddleMile"
+        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        myFile = open(outFile, 'a')
+        myFile.write("" + "\n")
+        myFile.write("*Check Layer: " + theLyr + "\n")            
+        sbdd_checkGeometry("/BB_ConnectionPoint_", theLyr)
+        myChecks = ["PROVNAME", "DBANAME", "FRN", "BHCAPACITY",
+                    "BHTYPE", "LATITUDE", "LONGITUDE", "STATEABBR", "FULLFIPSID"]
+        for myCheck in myChecks:
+            myFlag = myFlag + sbdd_qry (theFD + "/BB_ConnectionPoint_" + theLyr, theST + theLyr + "_" +
+                                        myCheck, sbdd_qryDef(myCheck), "Fail")
+        myFile.close()
+
+except:
+    arcpy.AddMessage("Something bad happened")
        
 if myFlag > 0:
     arcpy.AddMessage("*********************************************")

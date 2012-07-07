@@ -1,0 +1,36 @@
+State Broadband Data Initiative
+Federal Communications Commission
+
+Submission Script Issues Addressed
+July 7, 2012
+
+	
+Number	Request	Recommendation	Status
+1	Request - 	Make Script work with an ArcEdit License, rather than an ArcInfo 
+					License	
+	Fix - 		Replace the use of the Frequency Tool, with the use of the 
+					Statistics Tool
+2	Request - 	Change the scrip to not fail when a single provider offers service to 
+					a block at different speeds for different end user categories	
+	Fix - 		Change the SpeedTier Business rule to include the EndUserCat as a 
+					summary field to get unique values for this field as well. 
+					The result will be that a different speed tier is allowed by the 
+					same provider in a single block if it is a different end user 
+					category
+3	Request - 	Make Script have the ability to run one layer at a time 		
+	Fix	- 		Add an argument in the .tbx which allows for selecting All, Block, 
+					Address, Roadsegment, Wireless, CAI, Overview, MiddleMile or LastMile
+4	Request - 	Change script to fix exception w/ Middle Mile Elevation	
+	Fix - 		Remove the ElevFeet check from the script
+5	Request - 	Change script to fix exception w/ Middle Mile Ownership	
+				Remove the ownership check from Middle Mile	Fixed
+6	Request - 	Change the scrip to not fail when a single provider offers service to 
+					a address at different speeds for different end user categories	
+	Fix - 		Remove the SpeedTier check from the address table
+7	Request - 	Allow wireless technologies in CAI data	
+	Fix - 		Add a query category for CAI transtech to include All available options
+8	Request - 	Fix allowable nulls in road segment data	
+	Fix - 		Ensure only NBM data fields are checked for integrity issues
+9	Request - 	Change MaxAdUp and MaxAdDown in CAI data to include acceptance of 
+				Nulls and default values (e.g. ZZ)	
+	Fix - 		Remove the MaxAdDown and MaxAdUp checks from CAI
