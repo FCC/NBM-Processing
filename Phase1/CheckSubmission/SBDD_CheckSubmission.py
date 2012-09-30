@@ -45,6 +45,29 @@
 ###         or an individual layer to run the code on
 ###
 ### ---------------------------------------------------------------------------
+### ---------------------------------------------------------------------------
+### Edited August 14, 2012 - Richard A. Kammer Jr. - Michael Baker Jr., Inc.
+### includes the folowing changes
+###-Change Remove the "BLOCKSUBGROUP" checks for BB_Service_CensusBlock. The
+###        "BLOCKSUBGROUP" field does not exist in the BB_Service_CensusBlock
+###        feature class.
+###-Change Added single quaotes to the conditions (1 and 7) in the "ENDUSERCAT"
+###        query.
+###-Change Remove the "DBANAME" checks for BB_Service_CAInstitutions. The
+###        "DBANAME" field does not exist in the BB_Service_CAInstitutions
+###        feature class.
+###-Change Added single quaotes to the conditions (1 and 5) in the "CAICAT"
+###        query.
+###-Change Remove the "FULLFIPS" checks for BB_ConnectionPoint_LastMile. The
+###        "FULLFIPS" field does not exist in the BB_ConnectionPoint_LastMile
+###        feature class.
+###-Change Added a closing parthenace to the LONGITUDE query.
+###-Change Changed the < and >. The query was (LONGITUDE > -170 OR LONGITUDE < -60)
+###        which included the LONGITUDEs -170 to -60 and it should be
+###        (LONGITUDE < -170 OR LONGITUDE > -60) which exclude the LONGITUDEs
+###        -170 to -60
+### ---------------------------------------------------------------------------
+
 
 # Import system modules
 import sys, string, os, arcpy
@@ -288,7 +311,7 @@ def sbdd_qryDef (myField):
     if myField == "LATITUDE":
         theQry = "LATITUDE Is Null OR LATITUDE < 0"
     if myField == "LONGITUDE":
-        theQry = "LONGITUDE Is Null OR (LONGITUDE > -170 OR LONGITUDE < -60"
+        theQry = "LONGITUDE Is Null OR (LONGITUDE < -170 OR LONGITUDE > -60)"
     if myField == "ELEVFEET":
         theQry = "ELEVFEET Is Null OR ELEVFEET < 0"
     if myField == "STATEABBR":
@@ -308,9 +331,9 @@ def sbdd_qryDef (myField):
     if myField == "ZIP5":
         theQry = "ZIP5 IS NULL OR ZIP5 = '' OR ZIP5 = ' ' OR ZIP5 = '0'"
     if myField == "CAICAT":
-        theQry = "CAICAT IS NULL OR (CAICAT < 1 OR CAICAT > 7)"
+        theQry = "CAICAT IS NULL OR (CAICAT < '1' OR CAICAT > '7')"
     if myField == "ENDUSERCAT":
-        theQry = "ENDUSERCAT IS NULL OR (ENDUSERCAT < 1 OR ENDUSERCAT > 5)"
+        theQry = "ENDUSERCAT IS NULL OR (ENDUSERCAT < '1' OR ENDUSERCAT > '5')"
     if myField == "BBSERVICE":
         theQry = "BBSERVICE IS NULL OR BBSERVICE = '' OR BBSERVICE = ' ' OR "
         theQry = theQry + " (BBSERVICE <> 'N' AND BBSERVICE <> 'Y' AND "
@@ -494,7 +517,7 @@ if theCheckList == "All" or theCheckList == "Block":
             myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
                                         myCheck, sbdd_qryDef(myCheck), "Warn")
     myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "STATEFIPS", "COUNTYFIPS",
-                "TRACT", "BLOCKID", "BLOCKSUBGROUP", "FULLFIPSID", "OneSpeedAndNotTheOther"]
+                "TRACT", "BLOCKID", "FULLFIPSID", "OneSpeedAndNotTheOther"]
     for myCheck in myChecks:
         myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
                                     myCheck, sbdd_qryDef(myCheck), "Fail")
@@ -591,7 +614,7 @@ if theCheckList == "All" or theCheckList == "CAI":
             myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
                                         myCheck, sbdd_qryDef(myCheck), "Warn")
     myChecks = ["ANCHORNAME", "ADDRESS", "BLDGNBR", "STREETNAME", "CITY" , "STATECODE",
-                "ZIP5", "CAICAT", "BBSERVICE", "DBANAME", "FULLFIPSID"]
+                "ZIP5", "CAICAT", "BBSERVICE", "FULLFIPSID"]
     for myCheck in myChecks:
         myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theLyr + "_" +
                                     myCheck, sbdd_qryDef(myCheck), "Fail")
@@ -626,7 +649,7 @@ if theCheckList == "All" or theCheckList == "LastMile":
     myFile.write("*Check Layer: " + theLyr + "\n")            
     sbdd_checkGeometry("/BB_ConnectionPoint_", theLyr)
     myChecks = ["PROVNAME", "DBANAME", "FRN", "OWNERSHIP" , "BHCAPACITY",
-                "BHTYPE", "LATITUDE", "LONGITUDE", "ELEVFEET", "STATEABBR", "FULLFIPSID"]
+                "BHTYPE", "LATITUDE", "LONGITUDE", "ELEVFEET", "STATEABBR"]
     for myCheck in myChecks:
         myFlag = myFlag + sbdd_qry (theFD + "/BB_ConnectionPoint_" + theLyr, theLyr + "_" +
                                     myCheck, sbdd_qryDef(myCheck), "Fail")
