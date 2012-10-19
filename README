@@ -1,4 +1,3 @@
-
 * -----------------------------------------------------------------------------
 * NBM-Processing README - Data 
 *
@@ -15,9 +14,10 @@ This repository contains the all the scripts used to initially process
 the National Broadband Map data submissions.
 
 All submissions run on:
-  - ESRI ArcInfo software
-  - the NBM Data Transfer Data Model (file geodatabase)
-  - in a standard directory structure with subfolders for each two letter state
+  
+ * ESRI ArcInfo software
+ * the NBM Data Transfer Data Model (file geodatabase)
+ * in a standard directory structure with subfolders for each two letter state
      abbreviation.  It is assumed there is a file geodatabase of that state 
      in the state subfolder.  Each file geodatabase follows a normal naming convention
      including the state abbreviation and the month, day and year of the submission.
