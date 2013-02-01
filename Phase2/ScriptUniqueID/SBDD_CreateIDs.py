@@ -92,7 +92,7 @@ def sbdd_IDField ():
     if theST == "ME":
         stFIPS = '23'
     if theST == "MP":
-        stFIPS = '68'
+        stFIPS = '69'
     if theST == "MI":
         stFIPS = '26'
     if theST == "MN":
