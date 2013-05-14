@@ -55,8 +55,8 @@ from os import remove, close
 today = date.today()
 
 #acquire arguments
-theLocation = "C:/Users/NBMSource/Spring2012/"
-theYear = "2012"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
 theMonth = "04"
 theDay = "01"
 
