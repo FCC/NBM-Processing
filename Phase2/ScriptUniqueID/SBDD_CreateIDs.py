@@ -21,13 +21,18 @@ import sys, string, os, math
 ##3 = delivered April 2011
 ##4 = delivered oct 2011
 ##5 = delivered April 2012
-theRound = 5
+##6 = delivered October 2012
+##7 = delivered April 2013
+##8 = delivered October 2013
+##9 = delivered April 2014
+##10 = delivered October 2014
+theRound = 7
 ##theSubmission is the first, second, third submission from the state
 theSubmission = 1
 
-theLocation = "C:/Users/NBMSource/Spring2012/"
-theYear = "2012"
-theMonth = "10"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -37,6 +42,8 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+
+States = ["AS"]
 
 ##write out functions
 ##Function sbdd_ReturnFIPS returns the FIPSID for the State
