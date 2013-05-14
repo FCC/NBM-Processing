@@ -15,9 +15,9 @@ import sys, string, os, math
 
 #write out global variables
 thePGDB = "C:/Users/Processing.gdb"  #processing file geodatabase
-theLocation = "C:/Users/NBMSource/Fall2011/"
-theYear = "2011"
-theMonth = "10"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -26,7 +26,8 @@ States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3
 States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4 
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
-States = States + ["UT","VA","VI","WA","WI","WV","WY"] #7"VT",
+States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+States = ["AS"]
 
 ##write out functions
 ##Function sbdd_ExportToShape exports the created layers to shapefiles in appropriate directories
