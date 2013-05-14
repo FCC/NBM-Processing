@@ -13,12 +13,15 @@ import sys, string, os, math
 
 
 #write out global variables
-thePGDB = "C:/Users/Processing.gdb"
-#thePGDB = "C:/Users/michael.byrne/Processing.gdb"  #processing file geodatabase
+##***************************************************************
+##YOU NEED TO EDIT THESE NEXT LINES for the correct paths
+thePGDB = "C:/Users/michael.byrne/Processing.gdb"
 arcpy.env.workspace = thePGDB
-theLocation = "C:/Users/NBMSource/Spring2012/"
-#theLocation = "C:/Users/michael.byrne/NBMSource/Fall2011/"
-theYear = "2012"
+theBlockGDB = "C:/Users/michael.byrne/Library/TabBlock_2010.gdb/"
+theoFilePre = "C:/Users/michael.byrne/wireless_overlay_"
+##***************************************************************
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
 theMonth = "04"
 theDay = "01"
 
@@ -29,9 +32,9 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+States = ["AS"]
 
-theBlockGDB = "C:/Users/SpatialData/Library/TabBlock_2010.gdb/"
-#theBlockGDB = "C:/Users/michael.byrne/SpatialData/Library/TabBlock_2010.gdb/"
+
 
 ##write out functions
 ##Function sbdd_ExportToShape exports the created layers to shapefiles in
@@ -90,7 +93,7 @@ try:
         arcpy.AddMessage("the state is: " + theST)
         blockIntersect()
         #open a file to write when it finished
-        outFile = "K:/Co-Share/Byrne/wireless_overlay_" + theST + ".txt"
+        outFile = theoFilePre + theST + ".txt"
         myFile = open(outFile, 'w')
         myFile.write(theST + ": finished\n")
         myFile.close()
