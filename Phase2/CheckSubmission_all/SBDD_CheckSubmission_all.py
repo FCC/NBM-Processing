@@ -67,7 +67,7 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AS","VI"]
+States = ["AS"]
 
 #set up variables
 myFlag = 0
