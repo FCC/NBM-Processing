@@ -11,9 +11,9 @@ import sys, string, os, arcpy
 from arcpy import env
 
 #basic variabls
-theLocation = "C:/Users/NBMSource/Fall2011/"
-theYear = "2011"
-theMonth = "10"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] #1
