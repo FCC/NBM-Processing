@@ -12,11 +12,8 @@ from arcpy import env
 import sys, string, os, math
 
 #global variables
-theOF = "C:/Users/michael.byrne/Export/Table/WirelessOverlay/"
-theOF = "C:/Users/Export/Table/WirelessOverlay/"
-theFGDB = "C:/Users/michael.byrne/Processing.gdb/"
-theFGDB = "C:/Users/Processing.gdb/"
-theSuffix = "_NBM-WirelessOverlay-June-2011.csv"
+theOF = "C:/Users/michael.byrne/NBM/Export/Wirelessoverlay/"
+theFGDB = "C:/Users/michael.byrne/Processing_wireless.gdb/"
 thePrefix = "wireless_block_overlay_"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -27,18 +24,19 @@ States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 
-theLocation = "C:/Users/michael.byrne/NBMSource/Fall2011/"
-theLocation = "C:/Users/NBMSource/Fall2011/"
-theYear = "2011"
-theMonth = "10"
+States = ["AS"]
+
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
+theSuffix = "_NBM-WirelessOverlay-" + theYear + "-" + theMonth + ".csv"
 
 #Function sbdd_ProviderReport writes out the unique Provider Values Detail
 #has no argument; 
 def sbdd_exportFile (myTbl, myOutFile):
     #go open up and read this table
     myFile = open(myOutFile, 'a')
-    arcpy.AddMessage(myTbl)
     for row in arcpy.SearchCursor(myTbl):
         myOID = str(row.getValue("OBJECTID")).strip()
         myBlk = str(row.getValue("GEOID10")).strip()
