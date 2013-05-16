@@ -29,7 +29,7 @@ theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
 theYear = "2013"
 theMonth = "04"
 theDay = "01"
-theSuffix = "_NBM-Address-" + theYear + "-" + theMonth + ".csv"
+theSuffix = "_NBM-Block-" + theYear + "-" + theMonth + ".csv"
 
 #Function sbdd_ProviderReport writes out the unique Provider Values Detail
 #has no argument; 
