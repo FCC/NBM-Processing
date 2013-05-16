@@ -5,6 +5,7 @@
 # Federal Communications Commission
 # checks to make sure that all SBDD_IDs are accounted for
 # in the overlay output tables that are in the input data
+#run after you run wireless_append
 # ---------------------------------------------------------------------------
 
 # Import system modules
@@ -12,7 +13,7 @@ import arcpy
 from arcpy import env
 import sys, string, os, math
 
-thePGDB = "C:/Users/michael.byrne/Processing.gdb"  #processing file geodatabase
+thePGDB = "C:/Users/michael.byrne/Processing_wireless.gdb"  #processing file geodatabase
 theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
 theYear = "2013"
 theMonth = "04"
@@ -26,7 +27,7 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6 
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AK"]
+States = ["AS"]
 
 
 ##write out functions
@@ -39,19 +40,19 @@ def checkOverlyRecords():
         rows = arcpy.SearchCursor(theFD + "BB_Service_Wireless")
         for row in rows: #for every row in the delivered wireless layer
             arcpy.AddMessage("     checking ID " + str(myCnt) + " of " + str(theCnt))
-            myTech = str(row.getValue("TRANSTECH"))
-            myID = row.getValue("SBDD_ID") 
-            if arcpy.Exists("wireless_block_" + theST + "_" + str(myCnt) ):  #if the state table exists, get the record count on it
+            if arcpy.Exists("wireless_block_overlay_" + theST):  #if the state table exists, get the record count on it
+                myTech = str(row.getValue("TRANSTECH"))
+                myID = row.getValue("SBDD_ID") 
                 if myTech <> "60":                   
                     myQry = "TRANSTECH <> 60 AND SBDD_ID = '" + str(myID) + "'"
                     myLyr = theST + "SBDD_ID_Check_" + str(myCnt)
-                    arcpy.MakeTableView_management ("wireless_block_" + theST + "_" + str(myCnt) , myLyr, myQry)
+                    arcpy.MakeTableView_management ("wireless_block_overlay_" + theST, myLyr, myQry)
                     if int(arcpy.GetCount_management(myLyr).getOutput(0)) < 1:
                         arcpy.AddMessage("        SBDD_ID " + str(myID) + " is missing from " + theST)
                         del myLyr, myQry
+                else:
+                    arcpy.AddMessage("       this record is a satellite record: " + myID)
                 del myTech, myID
-            elif myTech == "60":
-                arcpy.AddMessage("       this record is a satellite record: " + myID)
             else:
                 arcpy.AddMessage("     the state hasn't been run yet")
             myCnt = myCnt + 1
