@@ -5,7 +5,6 @@
 # Federal Communications Commission
 # checks to make sure that all SBDD_IDs are accounted for
 # in the overlay output tables that are in the input data
-#run after you run wireless_append
 # ---------------------------------------------------------------------------
 
 # Import system modules
