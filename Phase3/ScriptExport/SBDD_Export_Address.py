@@ -23,7 +23,6 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["HI"]
 
 theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
 theYear = "2013"
@@ -100,4 +99,3 @@ try:
     del theOF, theSuffix, theLocation, theYear, theMonth, theDay 
 except:
     arcpy.AddMessage("Something bad happened")
-
