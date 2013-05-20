@@ -16,11 +16,10 @@ from os import remove, close
 today = date.today()
 
 #global variables
-theOF = "C:/Users/michael.byrne/SBDD/Export/Table/RndPoint/"
-theOF = "C:/Users/Export/Table/RndPoint/"
-theFGDB = "C:/Users/Processing.gdb/"
+theOF = "C:/Users/michael.byrne/NBM/Export/RndPoint/"
+theFGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb/"
 thePrefix = "RandomPoint_"
-theSuffix = "_NBM-RNDPoint-CSV-June-2011.csv"
+theSuffix = "_NBM-RNDPoint-CSV-Dec-2012.csv"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -49,11 +48,12 @@ def sbdd_exportFile (myTbl, myOutFile):
         myUp = str(row.getValue("MAXADUP")).strip()
         myTYDown = str(row.getValue("TYPICDOWN")).strip()         
         myTYUp = str(row.getValue("TYPICUP")).strip()
+        myEndCat = str(row.getValue("ENDUSERCAT")).strip()
         myID = str(row.getValue("SBDD_ID")).strip()
         myStr = myPTID + "|" + mySrc + "|" + myIntID + "|" + myFIPS + "|"
         myStr = myStr + myFRN + "|" + myProv + "|" + myDBA + "|" + myTech + "|" 
         myStr = myStr + myType + "|" + myDown + "|" + myUp + "|" 
-        myStr = myStr + myTYDown + "|" + myTYUp + "|" + myID
+        myStr = myStr + myTYDown + "|" + myTYUp + "|" + myEndCat + "|" + myID
         myFile.write(myStr +  "\n")
         del myPTID, mySrc, myIntID, myFIPS,  
         del myFRN, myProv, myDBA, myTech
@@ -70,7 +70,7 @@ try:
         theHead = "RANDOM_PT_OBJECTID|DATASOURCE|ROADSED_ADDR_OBJECTID|"
         theHead = theHead + "CENSUSBLOCK_FIPS|FRN|PROVNAME|DBANAME|"
         theHead = theHead + "TRANSTECH|PROVIDER_TYPE|MAXADDOWN|MAXADUP|"
-        theHead = theHead + "TYPICDOWN|TYPICUP|SBDD_ID"
+        theHead = theHead + "TYPICDOWN|TYPICUP|ENDUSERCAT|SBDD_ID"
         theTbl = theFGDB + thePrefix + theST
         #write output
         arcpy.AddMessage("the state is: " + theST)
@@ -92,5 +92,4 @@ try:
     del theOF, theFGDB, thePrefix, theSuffix    
 except:
     arcpy.AddMessage("Something bad happened")
-
 
