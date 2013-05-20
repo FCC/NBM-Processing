@@ -60,7 +60,7 @@ def sbdd_exportFile (myTbl, myOutFile):
         del myType, myDown, myUp
         del myTYDown, myTYUp, myID, myStr
     myFile.close()
-    del row
+    #del row - commented out
 
 ##***********Primary Code flow begins below
 try:
