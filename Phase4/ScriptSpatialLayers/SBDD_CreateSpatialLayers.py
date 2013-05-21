@@ -14,11 +14,8 @@ from arcpy import env
 import sys, string, os, math
 
 #Write out variables
-
-thePGDB = "C:/Users/Processing.gdb"  #processing file geodatabase
-#thePGDB = "C:/Users/michael.byrne/Processing.gdb"
-theOF = "C:/Users/Export/Shape/"                   
-#theOF = "C:/Users/michael.byrne/Export/Shape/"
+thePGDB = "C:/Users/michael.byrne/Processing.gdb"
+theOF = "C:/Users/michael.byrne/NBM/Export/Shape/"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -27,18 +24,18 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] 
 
-theLocation = "C:/Users/NBMSource/Fall2011/"
-#theLocation = "C:/Users/michael.byrne/NBMSource/Fall2011/"
-theYear = "2011"
-theMonth = "10"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
 
-doAddress = "No" #Yes
-doBlock = "Yes" #Yes
+doAddress = "Yes" #Yes
+doBlock = "No" #Yes
 doCAI = "No"  #Yes
 doMM = "No" #Yes
-doRoad = "No" #Yes
+doRoad = "Yes" #Yes
 doWireless = "No" #Yes
 
 ##write out functions
