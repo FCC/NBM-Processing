@@ -15,12 +15,10 @@ from arcpy import env
 import sys, string, os, math
 
 #global variables
-theOF = "C:/Users/"
+theOF = "C:/Users/michael.byrne/"
 #processing file geodatabase
-thePGDB = "C:/Users/michael.byrne/Processing.gdb"  
-thePGDB = "C:/Users/Processing.gdb"
-theRndPT = "C:/Users/michael.byrne/RanddomPoint_2010.gdb/RandomPoint_Less2SqMiles" 
-theRndPT = "C:/Users/SpatialData/Library/RandomPoint_2010.gdb/RandomPoint_Less2SqMiles"
+thePGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb"  
+theRndPT = "C:/Users/michael.byrne/Library/RandomPtFall2012.gdb/RandomPt_GT2sqm"
 env.workspace = thePGDB
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -32,10 +30,9 @@ States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 
 theFCs = ["BB_Service_Address", "BB_Service_RoadSegment"]
-theLocation = "C:/Users/michael.byrne/NBMSource/Fall2011/"
-theLocation = "C:/Users/NBMSource/Fall2011/"
-theYear = "2011"
-theMonth = "10"
+theLocation = "C:/Users/michael.byrne/NBM/Spring2013/data/"
+theYear = "2013"
+theMonth = "04"
 theDay = "01"
 
 ##Function sbdd_CreateTable defines a new state table
@@ -60,6 +57,7 @@ def sbdd_CreateTable():
     arcpy.AddField_management(myTbl, "TYPICDOWN", "TEXT", "", "", "2")
     arcpy.AddField_management(myTbl, "TYPICUP", "TEXT", "", "", "2")
     arcpy.AddField_management(myTbl, "STATE_CODE", "TEXT", "", "", "2")    
+    arcpy.AddField_management(myTbl, "ENDUSERCAT", "TEXT", "", "", "4") 
     arcpy.AddField_management(myTbl, "SBDD_ID", "TEXT", "", "", "20")
     del myTbl
     return ()
