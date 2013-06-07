@@ -29,15 +29,16 @@ myUser = "postgres"
 db = "feomike"
 schema = "sbi2012dec"
 srcdir = "/users/feomike/documents/data/sbi/2013_1/export/shapes/"
+theEPSG = "4326"
 
 #define ddl for block
 def create_tbl_ddl(myTbl):
-  myST = "ri"  #change to ri
+	myST = "ri"  #change to ri
 	thepSQL = "psql -p 54321 -h " + myHost + " " + db + " -c "
 	thepSQL = thepSQL + "'DROP TABLE if exists " + schema + ".shp_" + myTbl + "'"
 	os.system(thepSQL)
 	srcshp = srcdir + myST + "_" + myTbl + ".shp "
-	thepSQL = "shp2pgsql -s 4236 -I -W latin1 -g geom " + srcshp + schema + "."
+	thepSQL = "shp2pgsql -s " + theEPSG + " -I -W latin1 -g geom " + srcshp + schema + "."
 	thepSQL = thepSQL + "shp_" + myTbl + " " +  db + " | psql -p 54321 -h localhost " + db
 	os.system(thepSQL)
 	thepSQL = "psql -p 54321 -h " + myHost + " " + db + " -c " 
@@ -48,7 +49,7 @@ def create_tbl_ddl(myTbl):
 def load_tbl(myST, myfc):
 	srcshp = srcdir + myST + "_" + myfc + ".shp "
 	if os.path.exists(srcshp.strip()):
-		theSQL = "shp2pgsql -s 4236 -W latin1 -g geom -a " + srcshp + schema + "."
+		theSQL = "shp2pgsql -s " + theEPSG + " -W latin1 -g geom -a " + srcshp + schema + "."
 		theSQL = theSQL + "shp_" + myfc + " " + db + " | psql -p 54321 -h localhost " + db
 		os.system(theSQL)
 		thepSQL = "psql -p 54321 -h " + myHost + " " + db + " -c "
