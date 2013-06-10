@@ -13,8 +13,10 @@
 ##runs in python
 ##postgres/gis (open geo suite)
 ##data
-##a shapefile of the the buffers of the towers excluding lpfm
-##creates 1 output shapefile per channel
+##import shape files for each state in the State list
+##outputs one table as an append of every shape input
+##uses a template shape (from the state of RI) which is truncated
+##appends all others to this blank table
 
 # Import system modules
 import sys, string, os
