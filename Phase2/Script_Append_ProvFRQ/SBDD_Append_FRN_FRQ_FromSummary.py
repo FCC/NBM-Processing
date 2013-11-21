@@ -14,10 +14,10 @@ from arcpy import env
 import sys, string, os, math
 
 #write out global variables
-thePGDB = "C:/Users/Processing.gdb"  #processing file geodatabase
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+thePGDB = "C:/Users/michael.byrne/Processing.gdb"  #processing file geodatabase
+theLocation = "C:/Users/michael.byrne/NBM/2013_2/"
 theYear = "2013"
-theMonth = "04"
+theMonth = "10"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -27,6 +27,7 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
+
 States = ["AS"]
 
 ##write out functions
@@ -34,10 +35,11 @@ States = ["AS"]
 def sbdd_AddStToFRQ (myTB, myST):
     arcpy.AddMessage("     Begining " + myTB + " Processing")
     theSTexp = "'" + myST + "'"
-    if arcpy.Exists(theTB):
+    if arcpy.Exists(myTB):
         arcpy.DeleteField_management (myTB, ["State"])
-        arcpy.AddField_management(theTB, "State", "TEXT", "", "", 2)
-        arcpy.CalculateField_management(theTB, "State", theSTexp, "PYTHON")
+        arcpy.AddField_management(myTB, "State", "TEXT", "", "", 2)
+        arcpy.CalculateField_management(myTB, "State", theSTexp, "PYTHON")
+        arcpy.Append_management([myTB], outTB, "NO_TEST")
     else:
         arcpy.AddMessage("     Table: " + myTB + " does not exist for this State")
     del myTB, theSTexp
@@ -72,7 +74,6 @@ try:
             theTB = theTB + "_" + theMonth + "_" + theDay + ".gdb/Prov_FRQ"
             sbdd_AddStToFRQ(theTB, theST)
             arcpy.AddMessage("     appending: "  + theST + " Prov_FRQ")
-            arcpy.Append_management([theTB], outTB, "NO_TEST")
         del theTB, theST, States, thePGDB, outTB
     else:
         arcpy.AddMessage("You need a file named: " + thePGDB)
