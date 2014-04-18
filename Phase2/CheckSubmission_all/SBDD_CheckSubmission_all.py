@@ -496,7 +496,7 @@ try:
                 myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
                                             myCheck, sbdd_qryDef(myCheck), "Warn")
         myChecks = ["PROVNAME", "DBANAME", "PROVIDER_TYPE", "FRN", "STATEFIPS", "COUNTYFIPS",
-                    "TRACT", "BLOCKID", "BLOCKSUBGROUP", "FULLFIPSID", "OneSpeedAndNotTheOther"]
+                    "TRACT", "BLOCKID", "FULLFIPSID", "OneSpeedAndNotTheOther"]
         for myCheck in myChecks:
             myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
                                         myCheck, sbdd_qryDef(myCheck), "Fail")
@@ -589,7 +589,7 @@ try:
                 myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
                                             myCheck, sbdd_qryDef(myCheck), "Warn")
         myChecks = ["ANCHORNAME", "ADDRESS", "BLDGNBR", "STREETNAME", "CITY" , "STATECODE",
-                    "ZIP5", "CAICAT", "BBSERVICE", "DBANAME", "FULLFIPSID"]
+                    "ZIP5", "CAICAT", "BBSERVICE", "FULLFIPSID"]
         for myCheck in myChecks:
             myFlag = myFlag + sbdd_qry (theFD + "/BB_Service_" + theLyr, theST + theLyr + "_" +
                                         myCheck, sbdd_qryDef(myCheck), "Fail")
