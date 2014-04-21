@@ -251,7 +251,7 @@ def sbdd_qryDef (myField):
     if myField == "LATITUDE":
         theQry = "LATITUDE Is Null OR LATITUDE < 0"
     if myField == "LONGITUDE":
-        theQry = "LONGITUDE Is Null OR (LONGITUDE > -170 OR LONGITUDE < -60)"
+        theQry = "LONGITUDE Is Null OR (LONGITUDE < -170 OR LONGITUDE > -60)"
     if myField == "ELEVFEET":
         theQry = "ELEVFEET Is Null OR ELEVFEET < 0"
     if myField == "STATEABBR":
