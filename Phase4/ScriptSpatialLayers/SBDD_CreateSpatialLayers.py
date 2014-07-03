@@ -1,11 +1,13 @@
 # ---------------------------------------------------------------------------
 # SBDD_CreateSpatialLayers.py
-# Created on: May 16, 2011 
+# Created on: May 16, 2011
 # Created by: Michael Byrne
 # Federal Communications Commission
 # creates the individual layers necessary for the
 # National Broadband Map from the source file geodatabases
 # requires one State submission at a time
+#
+# Updated to Add EndUserCat and Provider_Type on export 7/3/14 ES/CG.
 # ---------------------------------------------------------------------------
 
 # Import system modules
@@ -14,29 +16,30 @@ from arcpy import env
 import sys, string, os, math
 
 #Write out variables
-thePGDB = "C:/Users/michael.byrne/Processing.gdb"
-theOF = "C:/Users/michael.byrne/NBM/Export/Shape/"
+thePGDB = "C:/SpatialDATA/Spring2014/Processing2.gdb"
+theOF = "C:/SpatialDATA/Spring2014/export/Shape/"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
 States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3
-States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4  
+States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] 
+##States = ["DC"]
 
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
+
+theLocation = "C:/SpatialDATA/Spring2014/"
+theYear = "2014"
 theMonth = "04"
 theDay = "01"
 
-doAddress = "Yes" #Yes
+doAddress = "No" #Yes
 doBlock = "No" #Yes
 doCAI = "No"  #Yes
 doMM = "No" #Yes
-doRoad = "Yes" #Yes
-doWireless = "No" #Yes
+doRoad = "No" #Yes
+doWireless = "Yes" #Yes
 
 ##write out functions
 ##Function sbdd_ProcessCAI prepares the CAI export
@@ -69,8 +72,8 @@ def sbdd_ProcessMM (theFD, theFL):
 ##works on the Block layer only
 def sbdd_ProcessBlock (myFD, myFL):
     arcpy.AddMessage("     Begining Block Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
-                 "TYPICDOWN","TYPICUP"]
+    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
+                 "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
     if arcpy.Exists("Block"):
         arcpy.Delete_management("Block")
     if arcpy.Exists(myFD + "/" + myFL): #its ok to process
@@ -78,7 +81,7 @@ def sbdd_ProcessBlock (myFD, myFL):
         theQ = "(MAXADDOWN = '3' OR MAXADDOWN = '4' OR MAXADDOWN = '5' OR MAXADDOWN = '6' OR " + \
                " MAXADDOWN = '7' OR MAXADDOWN = '8' OR MAXADDOWN = '9' OR MAXADDOWN = '10' OR MAXADDOWN = '11') AND " + \
                "(MAXADUP = '2' OR MAXADUP = '3' OR MAXADUP = '4' OR MAXADUP = '5' OR MAXADUP = '6' OR " + \
-               " MAXADUP = '7' OR MAXADUP = '8' OR MAXADUP = '9' OR MAXADUP = '10' OR MAXADUP = '11' )"       
+               " MAXADUP = '7' OR MAXADUP = '8' OR MAXADUP = '9' OR MAXADUP = '10' OR MAXADUP = '11' )"
         arcpy.MakeFeatureLayer_management(myFD + "/" + myFL, myFLName, theQ)
         arcpy.Dissolve_management(myFLName, "Block", theFields)
         arcpy.Delete_management(myFLName)
@@ -89,12 +92,12 @@ def sbdd_ProcessBlock (myFD, myFL):
     del theFields, myFL, myFD
     return ()
 
-##Function sbdd_ProcessRoad performs the buffer and multi to single 
+##Function sbdd_ProcessRoad performs the buffer and multi to single
 ##part conversion for Roads or address point features
 def sbdd_ProcessRoad (myFD, myFL):
     arcpy.AddMessage("     Begining Road Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
-                 "TYPICDOWN","TYPICUP"]
+    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
+                 "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
     if arcpy.Exists("Road"):
         arcpy.Delete_management("Road")
     if int(arcpy.GetCount_management(myFD + "/" + myFL).getOutput(0)) > 0:
@@ -116,8 +119,8 @@ def sbdd_ProcessRoad (myFD, myFL):
 ##Function sbdd_ProcessWireless prepares the CAI export
 def sbdd_ProcessWireless (myFD, myFL):
     arcpy.AddMessage("     Begining Wireless Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
-                 "TYPICDOWN","TYPICUP"]
+    ##theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
+    ##             "TYPICDOWN","TYPICUP","EndUserCat","SPECTRUM"]
     if arcpy.Exists("Wireless"):
         arcpy.Delete_management("Wireless")
 
@@ -131,30 +134,30 @@ def sbdd_ProcessWireless (myFD, myFL):
         arcpy.CopyFeatures_management(myFLName, "Wireless")
         arcpy.Delete_management(myFLName)
         arcpy.AddMessage("          Repairing geometry ...")
-        arcpy.RepairGeometry_management("Wireless")               
+        arcpy.RepairGeometry_management("Wireless")
         sbdd_ExportToShape("Wireless")
         del myFLName, theQ
-    del myFD, myFL, theFields
+    del myFD, myFL
     return ()
 
-##Function sbdd_ProcessAddress performs the address layer processing 
+##Function sbdd_ProcessAddress performs the address layer processing
 ##address point features
-##this is a complicated process of creating individual multi-part polygons for 
+##this is a complicated process of creating individual multi-part polygons for
 ##unique cominations of FRN, DBANAME,PROVNAME, TRANSTECH, MAXADUP and MAXADDOWN
-##for each combination, we point raster the data to develop a single 'buffered' 
-##layer to get around the complications arising from the ArcGIS buffer command 
+##for each combination, we point raster the data to develop a single 'buffered'
+##layer to get around the complications arising from the ArcGIS buffer command
 ##and issues relating to too complicated geographies and dissolve
 ##the for each loop is then appended to a master set of features
 def sbdd_ProcessAddress (myFD, myFL):
     arcpy.AddMessage("     Begining Address Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
-                 "TYPICDOWN","TYPICUP"]
+    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
+                 "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
     chkFC = ["Address_frq","Address"]
     for cFC in chkFC:
         if arcpy.Exists(cFC):
             arcpy.Delete_management(cFC)
     if int(arcpy.GetCount_management(myFD + "/" + myFL).getOutput(0)) > 1:
-        arcpy.Frequency_analysis(myFD + "/" + myFL, "Address" + "_frq", theFields, "")    
+        arcpy.Frequency_analysis(myFD + "/" + myFL, "Address" + "_frq", theFields, "")
         #open a cursor loop to get all the distinct values
         myCnt = 1
         theQ = "(MAXADDOWN = '3' OR MAXADDOWN = '4' OR MAXADDOWN = '5' OR MAXADDOWN = '6' OR " + \
@@ -186,7 +189,7 @@ def sbdd_ProcessAddress (myFD, myFL):
                 theTyUpQ = "TYPICUP = '" + theTyUp + "'"
             if theTyDown == "ZZ":
                 theTyDown = "ZZ"  #used for naming / logic on calculating
-                theTyDownQ = "TYPICDOWN = 'ZZ'"  #used as a selection set                
+                theTyDownQ = "TYPICDOWN = 'ZZ'"  #used as a selection set
             elif theTyDown == None:
                 theTyDown = "IsNull"
                 theTyDownQ = "TYPICDOWN Is Null"
@@ -198,7 +201,7 @@ def sbdd_ProcessAddress (myFD, myFL):
                 theTyDownQ = "TYPICDOWN = '" + theTyDown + "'"
             theQry = "FRN = '" + theFRN + "'"
             theQry = theQry + " AND TRANSTECH = " + str(theTransTech)
-            theQry = theQry + " AND MAXADDOWN = '" + theAdDown + "' AND MAXADUP = '" 
+            theQry = theQry + " AND MAXADDOWN = '" + theAdDown + "' AND MAXADUP = '"
             theQry = theQry + theAdUp + "' AND " + theTyUpQ + " AND " + theTyDownQ
             myFLName = theFRN + str(theTransTech) + theAdUp + theAdDown + theTyUp + theTyDown
             arcpy.MakeFeatureLayer_management(myFD + "/" + myFL, myFLName, theQry)
@@ -217,18 +220,18 @@ def sbdd_ProcessAddress (myFD, myFL):
                         arcpy.Delete_management(cFC)
                 del cFC, chkFC
                 #first create a feature class of the selected points
-                arcpy.FeatureClassToFeatureClass_conversion(myFLName, thePGDB, outPT) 
-                arcpy.RepairGeometry_management(outPT)                 
-                arcpy.Delete_management(myFLName)                
+                arcpy.FeatureClassToFeatureClass_conversion(myFLName, thePGDB, outPT)
+                arcpy.RepairGeometry_management(outPT)
+                arcpy.Delete_management(myFLName)
                 if int(arcpy.GetCount_management(outPT).getOutput(0)) > 50:
                     arcpy.AddMessage("          processing by raster point: " + outPT)
                     #second covert the selection to a grid data set (e.g. raster)
-                    arcpy.PointToRaster_conversion(outPT, "FRN", outRT, "", "", 0.0028) 
+                    arcpy.PointToRaster_conversion(outPT, "FRN", outRT, "", "", 0.0028)
                     theH = arcpy.Describe(outRT).Height
                     theW = arcpy.Describe(outRT).Width
                     if int(theH) > 2 and int(theW) > 2:
                         #third convert the rasters back to a polygon
-                        arcpy.RasterToPolygon_conversion(outRT, inPly, "NO_SIMPLIFY", "") 
+                        arcpy.RasterToPolygon_conversion(outRT, inPly, "NO_SIMPLIFY", "")
                         arcpy.AddField_management (inPly, "FRN", "TEXT", "", "", 10)
                         arcpy.AddField_management (inPly, "PROVNAME", "TEXT", "", "", 200)
                         arcpy.AddField_management (inPly, "DBANAME", "TEXT", "", "", 200)
@@ -253,16 +256,16 @@ def sbdd_ProcessAddress (myFD, myFL):
                         if myCnt == 1:  #this is the first time through, rename the bfPly to Address
                             arcpy.Rename_management(bfPly,"Address")
                         else: #otherwise append it to the first one through
-                            arcpy.Append_management([bfPly], "Address")  
+                            arcpy.Append_management([bfPly], "Address")
                     del theH, theW
                 #then buffer them
-                else:  
+                else:
                     arcpy.AddMessage("          processing by buffering: " + outPT)
                     arcpy.Buffer_analysis(outPT, bfPly, "500 Feet", "FULL", "ROUND", "LIST", theFields)
                     if myCnt == 1:  #this is the first time through, rename the bfPly to Address
                         arcpy.Rename_management(bfPly,"Address")
                     else: #otherwise append it to the first one through
-                        arcpy.Append_management([bfPly], "Address")  
+                        arcpy.Append_management([bfPly], "Address")
                 chkFC = [outPT, outRT, inPly, bfPly]
                 for cFC in chkFC:
                     if arcpy.Exists(cFC):
@@ -286,6 +289,9 @@ def sbdd_ExportToShape (myFC):
                                 myFC + ".shp")
     if arcpy.Exists(myFC):  #then export it
         arcpy.AddMessage("          Exporting " + myFC)
+        if myFC == "Wireless":
+            arcpy.DeleteField_management(myFC, "STATEABBR")
+            arcpy.DeleteField_management(myFC, "SBDD_ID")
         arcpy.FeatureClassToShapefile_conversion(myFC, theOF + myFC)
         arcpy.Rename_management(theOF + myFC + "/" + myFC + ".shp", theOF +
                                 myFC + "/" + theST + "_" + myFC + ".shp")
@@ -318,9 +324,9 @@ try:
         theFD = theFD + ".gdb/NATL_Broadband_Map/"
         arcpy.env.workspace = thePGDB
         if arcpy.Exists(theFD):
-            #prepare Address        
+            #prepare Address
             if doAddress == "Yes":
-                sbdd_ProcessAddress(theFD, "BB_Service_Address")        
+                sbdd_ProcessAddress(theFD, "BB_Service_Address")
             #prepare Blocks
             if doBlock == "Yes":
                 sbdd_ProcessBlock(theFD, "BB_Service_CensusBlock")
@@ -329,7 +335,7 @@ try:
                 sbdd_ProcessCAI(theFD, "BB_Service_CAInstitutions")
             #prepapre MiddleMile; this one is only done on request
             if doMM == "Yes":
-                sbdd_ProcessMM(theFD, "BB_ConnectionPoint_MiddleMile")        
+                sbdd_ProcessMM(theFD, "BB_ConnectionPoint_MiddleMile")
             #prepare Roads
             if doRoad == "Yes":
                 sbdd_ProcessRoad(theFD, "BB_Service_RoadSegment")
@@ -343,4 +349,4 @@ try:
 except:
     arcpy.AddMessage("Something bad happened")
 
-  
+
