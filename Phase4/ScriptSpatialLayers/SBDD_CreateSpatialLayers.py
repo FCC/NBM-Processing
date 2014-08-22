@@ -72,7 +72,7 @@ def sbdd_ProcessMM (theFD, theFL):
 ##works on the Block layer only
 def sbdd_ProcessBlock (myFD, myFL):
     arcpy.AddMessage("     Begining Block Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
+    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
                  "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
     if arcpy.Exists("Block"):
         arcpy.Delete_management("Block")
@@ -149,135 +149,148 @@ def sbdd_ProcessWireless (myFD, myFL):
 ##and issues relating to too complicated geographies and dissolve
 ##the for each loop is then appended to a master set of features
 def sbdd_ProcessAddress (myFD, myFL):
-    arcpy.AddMessage("     Begining Address Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
-                 "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
-    chkFC = ["Address_frq","Address"]
-    for cFC in chkFC:
-        if arcpy.Exists(cFC):
-            arcpy.Delete_management(cFC)
-    if int(arcpy.GetCount_management(myFD + "/" + myFL).getOutput(0)) > 1:
-        arcpy.Frequency_analysis(myFD + "/" + myFL, "Address" + "_frq", theFields, "")
-        #open a cursor loop to get all the distinct values
-        myCnt = 1
-        theQ = "(MAXADDOWN = '3' OR MAXADDOWN = '4' OR MAXADDOWN = '5' OR MAXADDOWN = '6' OR " + \
-               " MAXADDOWN = '7' OR MAXADDOWN = '8' OR MAXADDOWN = '9' OR MAXADDOWN = '10' OR MAXADDOWN = '11') AND " + \
-               "(MAXADUP = '2' OR MAXADUP = '3' OR MAXADUP = '4' OR MAXADUP = '5' OR MAXADUP = '6' OR " + \
-               " MAXADUP = '7' OR MAXADUP = '8' OR MAXADUP = '9' OR MAXADUP = '10' OR MAXADUP = '11' )"
-        for row in arcpy.SearchCursor("Address" + "_frq", theQ):
-            theProvName = row.getValue("PROVNAME").replace("'","")
-            theDBA = row.getValue("DBANAME").replace("'","")
-            theFRN = row.getValue("FRN")
-            theTransTech = row.getValue("TRANSTECH")
-            theAdUp = row.getValue("MAXADUP")
-            theAdDown = row.getValue("MAXADDOWN")
-            theTyUp = row.getValue("TYPICUP")
-            theTyDown = row.getValue("TYPICDOWN")
-            theTyUpQ = ""
-            theTyDownQ = ""
-            if theTyUp == "ZZ":
-                theTyUp = "ZZ"  #used for naming / logic on calculating
-                theTyUpQ = "TYPICUP = 'ZZ'"  #used as a selection set
-            elif theTyUp == None:
-                theTyUp = "IsNull"  #used for naming / logic on calculating
-                theTyUpQ = "TYPICUP Is Null"  #used as a selection set
-            elif theTyUp == " ":
-                theTyUp = "IsNull"
-                theTyUpQ = "TYPICUP = ' '"
-            else:
-                theTyUp = str(abs(int(theTyUp)))
-                theTyUpQ = "TYPICUP = '" + theTyUp + "'"
-            if theTyDown == "ZZ":
-                theTyDown = "ZZ"  #used for naming / logic on calculating
-                theTyDownQ = "TYPICDOWN = 'ZZ'"  #used as a selection set
-            elif theTyDown == None:
-                theTyDown = "IsNull"
-                theTyDownQ = "TYPICDOWN Is Null"
-            elif theTyDown == " ":
-                theTyDown = "IsNull"
-                theTyDownQ = "TYPICDOWN = ' '"
-            else:
-                theTyDown = str(abs(int(theTyDown)))
-                theTyDownQ = "TYPICDOWN = '" + theTyDown + "'"
-            theQry = "FRN = '" + theFRN + "'"
-            theQry = theQry + " AND TRANSTECH = " + str(theTransTech)
-            theQry = theQry + " AND MAXADDOWN = '" + theAdDown + "' AND MAXADUP = '"
-            theQry = theQry + theAdUp + "' AND " + theTyUpQ + " AND " + theTyDownQ
-            myFLName = theFRN + str(theTransTech) + theAdUp + theAdDown + theTyUp + theTyDown
-            arcpy.MakeFeatureLayer_management(myFD + "/" + myFL, myFLName, theQry)
-            if int(arcpy.GetCount_management(myFLName).getOutput(0)) > 0 :  #originally 1 for the raster case
-                outPT = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
-                        theAdUp + "_" + theTyDown + "_" + theTyUp + "_x" #the selection of points
-                outRT = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
-                        theAdUp + "_" + theTyDown + "_" + theTyUp + "_g" #the raster grid
-                inPly = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
-                        theAdUp + "_" + theTyDown + "_" + theTyUp + "_p" #the output of grid poly
-                bfPly = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
-                        theAdUp + "_" + theTyDown + "_" + theTyUp + "_pb" #the output of buffer
-                chkFC = [outPT, outRT, inPly, bfPly]
-                for cFC in chkFC:
-                    if arcpy.Exists(cFC):
-                        arcpy.Delete_management(cFC)
-                del cFC, chkFC
-                #first create a feature class of the selected points
-                arcpy.FeatureClassToFeatureClass_conversion(myFLName, thePGDB, outPT)
-                arcpy.RepairGeometry_management(outPT)
-                arcpy.Delete_management(myFLName)
-                if int(arcpy.GetCount_management(outPT).getOutput(0)) > 50:
-                    arcpy.AddMessage("          processing by raster point: " + outPT)
-                    #second covert the selection to a grid data set (e.g. raster)
-                    arcpy.PointToRaster_conversion(outPT, "FRN", outRT, "", "", 0.0028)
-                    theH = arcpy.Describe(outRT).Height
-                    theW = arcpy.Describe(outRT).Width
-                    if int(theH) > 2 and int(theW) > 2:
-                        #third convert the rasters back to a polygon
-                        arcpy.RasterToPolygon_conversion(outRT, inPly, "NO_SIMPLIFY", "")
-                        arcpy.AddField_management (inPly, "FRN", "TEXT", "", "", 10)
-                        arcpy.AddField_management (inPly, "PROVNAME", "TEXT", "", "", 200)
-                        arcpy.AddField_management (inPly, "DBANAME", "TEXT", "", "", 200)
-                        arcpy.AddField_management (inPly, "TRANSTECH", "SHORT", "", "", "")
-                        arcpy.AddField_management (inPly, "MAXADDOWN", "TEXT", "", "", 2)
-                        arcpy.AddField_management (inPly, "MAXADUP", "TEXT", "", "", 2)
-                        arcpy.AddField_management (inPly, "TYPICDOWN", "TEXT", "", "", 2)
-                        arcpy.AddField_management (inPly, "TYPICUP", "TEXT", "", "", 2)
-                        arcpy.AddField_management (inPly, "State", "TEXT", "", "", 2)
-                        arcpy.CalculateField_management(inPly, "FRN", "'" + theFRN + "'" ,"PYTHON")
-                        arcpy.CalculateField_management(inPly, "PROVNAME", r"'" + theProvName + "'" ,"PYTHON")
-                        arcpy.CalculateField_management(inPly, "DBANAME", r"'" + theDBA + "'" ,"PYTHON")
-                        arcpy.CalculateField_management(inPly, "TRANSTECH", theTransTech, "PYTHON")
-                        arcpy.CalculateField_management(inPly, "MAXADDOWN", "'" + theAdDown + "'" ,"PYTHON")
-                        arcpy.CalculateField_management(inPly, "MAXADUP", "'" + theAdUp + "'" ,"PYTHON")
-                        if theTyDown <> "IsNull":
-                            arcpy.CalculateField_management(inPly, "TYPICDOWN", "'" + theTyDown + "'" ,"PYTHON")
-                        if theTyUp <> "IsNull":
-                            arcpy.CalculateField_management(inPly, "TYPICUP", "'" + theTyUp + "'" ,"PYTHON")
-                        arcpy.CalculateField_management(inPly, "State", "'" + theST + "'" ,"PYTHON")
-                        arcpy.Buffer_analysis(inPly, bfPly, "100 Feet", "FULL", "ROUND", "LIST", theFields)
-                        if myCnt == 1:  #this is the first time through, rename the bfPly to Address
-                            arcpy.Rename_management(bfPly,"Address")
-                        else: #otherwise append it to the first one through
-                            arcpy.Append_management([bfPly], "Address")
-                    del theH, theW
-                #then buffer them
-                else:
-                    arcpy.AddMessage("          processing by buffering: " + outPT)
-                    arcpy.Buffer_analysis(outPT, bfPly, "500 Feet", "FULL", "ROUND", "LIST", theFields)
-                    if myCnt == 1:  #this is the first time through, rename the bfPly to Address
-                        arcpy.Rename_management(bfPly,"Address")
-                    else: #otherwise append it to the first one through
-                        arcpy.Append_management([bfPly], "Address")
-                chkFC = [outPT, outRT, inPly, bfPly]
-                for cFC in chkFC:
-                    if arcpy.Exists(cFC):
-                        arcpy.Delete_management(cFC)
-                del outPT, outRT, inPly, bfPly, cFC, chkFC
-                myCnt = myCnt + 1
-            del theProvName, theDBA, theFRN, theTransTech, theAdUp, theAdDown, theTyUp, \
-                theTyUpQ, theTyDown, theTyDownQ, theQry, myFLName
-        sbdd_ExportToShape("Address")
-        arcpy.Delete_management("Address_frq")
-        del row, myCnt, theFields, theQ, myFL, myFD
-    return ()
+   arcpy.AddMessage("     Begining Address Processing")
+   theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
+                "TYPICDOWN","TYPICUP","Provider_Type","ENDUSERCAT"]
+   chkFC = ["Address_frq","Address"]
+   for cFC in chkFC:
+       if arcpy.Exists(cFC):
+           arcpy.Delete_management(cFC)
+   if int(arcpy.GetCount_management(myFD + "/" + myFL).getOutput(0)) > 1:
+       arcpy.Frequency_analysis(myFD + "/" + myFL, "Address" + "_frq", theFields, "")    
+       #open a cursor loop to get all the distinct values
+       myCnt = 1
+       theQ = "(MAXADDOWN = '3' OR MAXADDOWN = '4' OR MAXADDOWN = '5' OR MAXADDOWN = '6' OR " + \
+              " MAXADDOWN = '7' OR MAXADDOWN = '8' OR MAXADDOWN = '9' OR MAXADDOWN = '10' OR MAXADDOWN = '11') AND " + \
+              "(MAXADUP = '2' OR MAXADUP = '3' OR MAXADUP = '4' OR MAXADUP = '5' OR MAXADUP = '6' OR " + \
+              " MAXADUP = '7' OR MAXADUP = '8' OR MAXADUP = '9' OR MAXADUP = '10' OR MAXADUP = '11' )"
+       for row in arcpy.SearchCursor("Address" + "_frq", theQ):
+           theProviderType=row.getValue("Provider_Type")
+           theEndUserCat=row.getValue("ENDUSERCAT")
+
+           theProvName = row.getValue("PROVNAME").replace("'","")
+           theDBA = row.getValue("DBANAME").replace("'","")
+           theFRN = row.getValue("FRN")
+           theTransTech = row.getValue("TRANSTECH")
+           theAdUp = row.getValue("MAXADUP")
+           theAdDown = row.getValue("MAXADDOWN")
+           theTyUp = row.getValue("TYPICUP")
+           theTyDown = row.getValue("TYPICDOWN")
+           theTyUpQ = ""
+           theTyDownQ = ""
+           if theTyUp == "ZZ":
+               theTyUp = "ZZ"  #used for naming / logic on calculating
+               theTyUpQ = "TYPICUP = 'ZZ'"  #used as a selection set
+           elif theTyUp == None:
+               theTyUp = "IsNull"  #used for naming / logic on calculating
+               theTyUpQ = "TYPICUP Is Null"  #used as a selection set
+           elif theTyUp == " ":
+               theTyUp = "IsNull"
+               theTyUpQ = "TYPICUP = ' '"
+           else:
+               theTyUp = str(abs(int(theTyUp)))
+               theTyUpQ = "TYPICUP = '" + theTyUp + "'"
+           if theTyDown == "ZZ":
+               theTyDown = "ZZ"  #used for naming / logic on calculating
+               theTyDownQ = "TYPICDOWN = 'ZZ'"  #used as a selection set                
+           elif theTyDown == None:
+               theTyDown = "IsNull"
+               theTyDownQ = "TYPICDOWN Is Null"
+           elif theTyDown == " ":
+               theTyDown = "IsNull"
+               theTyDownQ = "TYPICDOWN = ' '"
+           else:
+               theTyDown = str(abs(int(theTyDown)))
+               theTyDownQ = "TYPICDOWN = '" + theTyDown + "'"
+           theQry = "FRN = '" + theFRN + "'"
+           theQry = theQry + " AND TRANSTECH = " + str(theTransTech)
+           theQry = theQry + " AND MAXADDOWN = '" + theAdDown + "' AND MAXADUP = '" 
+           theQry = theQry + theAdUp + "' AND " + theTyUpQ + " AND " + theTyDownQ
+           myFLName = theFRN + str(theTransTech) + theAdUp + theAdDown + theTyUp + theTyDown
+           arcpy.MakeFeatureLayer_management(myFD + "/" + myFL, myFLName, theQry)
+           if int(arcpy.GetCount_management(myFLName).getOutput(0)) > 0 :  #originally 1 for the raster case
+               outPT = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
+                       theAdUp + "_" + theTyDown + "_" + theTyUp + "_x" #the selection of points
+               outRT = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
+                       theAdUp + "_" + theTyDown + "_" + theTyUp + "_g" #the raster grid
+               inPly = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
+                       theAdUp + "_" + theTyDown + "_" + theTyUp + "_p" #the output of grid poly
+               bfPly = theST + theFRN + "_" + str(theTransTech) + "_" + theAdDown + "_" + \
+                       theAdUp + "_" + theTyDown + "_" + theTyUp + "_pb" #the output of buffer
+               chkFC = [outPT, outRT, inPly, bfPly]
+               for cFC in chkFC:
+                   if arcpy.Exists(cFC):
+                       arcpy.Delete_management(cFC)
+               del cFC, chkFC
+               #first create a feature class of the selected points
+               arcpy.FeatureClassToFeatureClass_conversion(myFLName, thePGDB, outPT) 
+               arcpy.RepairGeometry_management(outPT)                 
+               arcpy.Delete_management(myFLName)                
+               if int(arcpy.GetCount_management(outPT).getOutput(0)) > 50:
+                   arcpy.AddMessage("          processing by raster point: " + outPT)
+                   #second covert the selection to a grid data set (e.g. raster)
+                   arcpy.PointToRaster_conversion(outPT, "FRN", outRT, "", "", 0.0028) 
+                   theH = arcpy.Describe(outRT).Height
+                   theW = arcpy.Describe(outRT).Width
+
+                   if int(theH) > 2 and int(theW) > 2:
+                       #third convert the rasters back to a polygon
+                       arcpy.RasterToPolygon_conversion(outRT, inPly, "NO_SIMPLIFY", "") 
+                       arcpy.AddField_management (inPly, "FRN", "TEXT", "", "", 10)
+                       arcpy.AddField_management (inPly, "PROVNAME", "TEXT", "", "", 200)
+                       arcpy.AddField_management (inPly, "DBANAME", "TEXT", "", "", 200)
+                       arcpy.AddField_management (inPly, "TRANSTECH", "SHORT", "", "", "")
+                       arcpy.AddField_management (inPly, "MAXADDOWN", "TEXT", "", "", 2)
+                       arcpy.AddField_management (inPly, "MAXADUP", "TEXT", "", "", 2)
+                       arcpy.AddField_management (inPly, "TYPICDOWN", "TEXT", "", "", 2)
+                       arcpy.AddField_management (inPly, "TYPICUP", "TEXT", "", "", 2)
+                       arcpy.AddField_management (inPly, "State", "TEXT", "", "", 2)
+                       arcpy.AddField_management (inPly, "Provider_Type", "SHORT", "", "", "")
+                       arcpy.AddField_management (inPly, "ENDUSERCAT", "TEXT", "", "", 2)
+
+
+
+                       arcpy.CalculateField_management(inPly, "FRN", "'" + theFRN + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "PROVNAME", r"'" + theProvName + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "DBANAME", r"'" + theDBA + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "TRANSTECH", theTransTech, "PYTHON")
+                       arcpy.CalculateField_management(inPly, "MAXADDOWN", "'" + theAdDown + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "MAXADUP", "'" + theAdUp + "'" ,"PYTHON")
+                       arcpy.AddMessage("theProvider_type: " + str(theProviderType))
+                       if theTyDown <> "IsNull":
+                           arcpy.CalculateField_management(inPly, "TYPICDOWN", "'" + theTyDown + "'" ,"PYTHON")
+                       if theTyUp <> "IsNull":
+                           arcpy.CalculateField_management(inPly, "TYPICUP", "'" + theTyUp + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "State", "'" + theST + "'" ,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "Provider_Type", theProviderType,"PYTHON")
+                       arcpy.CalculateField_management(inPly, "ENDUSERCAT", "'" + theEndUserCat + "'" ,"PYTHON")
+                       arcpy.AddMessage("theProvider_type: " + str(theProviderType))
+                       arcpy.Buffer_analysis(inPly, bfPly, "100 Feet", "FULL", "ROUND", "LIST", theFields)
+                       if myCnt == 1:  #this is the first time through, rename the bfPly to Address
+                           arcpy.Rename_management(bfPly,"Address")
+                       else: #otherwise append it to the first one through
+                           arcpy.Append_management([bfPly], "Address")  
+                   del theH, theW
+               #then buffer them
+               else:  
+                   arcpy.AddMessage("          processing by buffering: " + outPT)
+                   arcpy.Buffer_analysis(outPT, bfPly, "500 Feet", "FULL", "ROUND", "LIST", theFields)
+                   if myCnt == 1:  #this is the first time through, rename the bfPly to Address
+                       arcpy.Rename_management(bfPly,"Address")
+                   else: #otherwise append it to the first one through
+                       arcpy.Append_management([bfPly], "Address")  
+               chkFC = [outPT, outRT, inPly, bfPly]
+               for cFC in chkFC:
+                   if arcpy.Exists(cFC):
+                       arcpy.Delete_management(cFC)
+               del outPT, outRT, inPly, bfPly, cFC, chkFC
+               myCnt = myCnt + 1
+           del theProvName, theDBA, theFRN, theTransTech, theAdUp, theAdDown, theTyUp, \
+               theTyUpQ, theTyDown, theTyDownQ, theQry, myFLName, theProviderType,theEndUserCat
+       sbdd_ExportToShape("Address")
+       arcpy.Delete_management("Address_frq")
+       del row, myCnt, theFields, theQ, myFL, myFD
+   return ()
 
 ##Function sbdd_ExportToShape exports the created layers to shapefiles in
 ##appropriate directories
