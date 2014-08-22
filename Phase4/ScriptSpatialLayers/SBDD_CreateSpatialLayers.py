@@ -96,7 +96,7 @@ def sbdd_ProcessBlock (myFD, myFL):
 ##part conversion for Roads or address point features
 def sbdd_ProcessRoad (myFD, myFL):
     arcpy.AddMessage("     Begining Road Processing")
-    theFields = ["FRN","PROVNAME","DBANAME","FULLFIPSID","TRANSTECH","MAXADDOWN","MAXADUP",
+    theFields = ["FRN","PROVNAME","DBANAME","TRANSTECH","MAXADDOWN","MAXADUP",
                  "TYPICDOWN","TYPICUP","Provider_Type","EndUserCat"]
     if arcpy.Exists("Road"):
         arcpy.Delete_management("Road")
