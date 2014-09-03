@@ -28,7 +28,6 @@ States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 ##States = ["DC"]
 
-
 theLocation = "C:/SpatialDATA/Spring2014/"
 theYear = "2014"
 theMonth = "04"
@@ -305,6 +304,9 @@ def sbdd_ExportToShape (myFC):
         if myFC == "Wireless":
             arcpy.DeleteField_management(myFC, "STATEABBR")
             arcpy.DeleteField_management(myFC, "SBDD_ID")
+        if myFC == "Address":
+            dropFields = ["ADDRESS","BLDGNBR","PREDIR","STREETNAME","STREETTYPE","SUFEDIR","CITY","STATECODE","ZIP5","ZIP4","LATITUDE","LONGITUDE","SBDD_ID"]
+            arcpy.DeleteField_management(myFC,dropFields)
         arcpy.FeatureClassToShapefile_conversion(myFC, theOF + myFC)
         arcpy.Rename_management(theOF + myFC + "/" + myFC + ".shp", theOF +
                                 myFC + "/" + theST + "_" + myFC + ".shp")
