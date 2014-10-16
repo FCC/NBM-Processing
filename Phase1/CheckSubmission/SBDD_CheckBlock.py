@@ -139,10 +139,10 @@ try:
         sbdd_checkBlock("BB_Service_", theLyr,theST)
 
         #check for BB_ConnectionPoint_MiddleMile
-        theLyr = "MiddleMile"
-        arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
+        #theLyr = "MiddleMile"
+        #arcpy.AddMessage("Begining checks on Feature Class: " + theLyr)
         
-        sbdd_checkBlock("BB_ConnectionPoint_", theLyr,theST)
+        #sbdd_checkBlock("BB_ConnectionPoint_", theLyr,theST)
 
        
 except:
