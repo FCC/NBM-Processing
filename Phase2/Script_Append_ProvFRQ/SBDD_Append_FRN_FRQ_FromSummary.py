@@ -14,9 +14,10 @@ from arcpy import env
 import sys, string, os, math
 
 #write out global variables
-thePGDB = "C:/Users/michael.byrne/Processing.gdb"  #processing file geodatabase
-theLocation = "C:/Users/michael.byrne/NBM/2013_2/"
-theYear = "2013"
+#thePGDB = "C:/Users/michael.byrne/Processing.gdb"  #processing file geodatabase
+thePGDB = "C:/work/nbbm/2014_2/chkResult/appendFRNFRQ/Processing.gdb"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
 theMonth = "10"
 theDay = "01"
 
@@ -28,7 +29,6 @@ States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 
-States = ["AS"]
 
 ##write out functions
 ##Function sbdd_ExportToShape exports the created layers to shapefiles in appropriate directories
