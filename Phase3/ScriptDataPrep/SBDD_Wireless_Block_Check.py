@@ -12,10 +12,10 @@ import arcpy
 from arcpy import env
 import sys, string, os, math
 
-thePGDB = "C:/Users/michael.byrne/Processing_wireless.gdb"  #processing file geodatabase
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+thePGDB = "C:/work/nbbm/2014_2/chkResult/wlOverlay/Processing_wireless.gdb"  #processing file geodatabase
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
 arcpy.env.workspace = thePGDB
@@ -26,7 +26,7 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6 
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AS"]
+
 
 
 ##write out functions
@@ -38,7 +38,7 @@ def checkOverlyRecords():
     if theCnt > 0:  #if there are records in the wireless shape class        
         rows = arcpy.SearchCursor(theFD + "BB_Service_Wireless")
         for row in rows: #for every row in the delivered wireless layer
-            arcpy.AddMessage("     checking ID " + str(myCnt) + " of " + str(theCnt))
+            #arcpy.AddMessage("     checking ID " + str(myCnt) + " of " + str(theCnt))
             if arcpy.Exists("wireless_block_overlay_" + theST):  #if the state table exists, get the record count on it
                 myTech = str(row.getValue("TRANSTECH"))
                 myID = row.getValue("SBDD_ID") 
