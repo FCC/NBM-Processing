@@ -15,14 +15,17 @@ from arcpy import env
 import sys, string, os, math
 
 #global variables
-theOF = "C:/Users/michael.byrne/"
+#theOF = "C:/Users/michael.byrne/"
+theOF = "C:/work/nbbm/2014_2/chkResult/RntPtOverlay/"
 #processing file geodatabase
-thePGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb"  
-theRndPT = "C:/Users/michael.byrne/Library/RandomPtFall2012.gdb/RandomPt_GT2sqm"
+#thePGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb"
+thePGDB = "C:/work/nbbm/2014_2/chkResult/RntPtOverlay/Processing_rndpt.gdb"
+#theRndPT = "C:/Users/michael.byrne/Library/RandomPtFall2012.gdb/RandomPt_GT2sqm"
+theRndPT = "C:/work/nbbm/2014_2/Random_Points_0914.gdb/RandomPt_GT2sqm/RandomPts_GT2sqm"
 env.workspace = thePGDB
 
-States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
-States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
+States = ["AK","AL","AR","AS","AZ","CA","CO"]          #1
+States = States + ["CT", "DC","DE","FL","GA","GU","HI","IA","ID"] #2
 States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3 
 States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4 
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
@@ -30,9 +33,9 @@ States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 
 theFCs = ["BB_Service_Address", "BB_Service_RoadSegment"]
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/data/"
-theYear = "2013"
-theMonth = "04"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
 ##Function sbdd_CreateTable defines a new state table
@@ -100,12 +103,18 @@ def sbdd_Overlay():
             arcpy.Delete_management(FC)
     #buffer first
     #buffer the addres/road feature class 500'
-    #create the random pt feature layer            
+    #create the random pt feature layer
+    #arcpy.AddMessage("theFD:" + theFD)
+    #arcpy.AddMessage("theFc:" + theFC)
     arcpy.Buffer_analysis(theFD + theFC, "myBuffer", "500 FEET")      
     myLyr = theST + theFC
+
+    #arcpy.AddMessage("myLyr:" + myLyr)
     theFIPS = sbdd_ReturnFIPS()
     #myQry = "state2 = '" + theFIPS + "'"
-    myQry = "BLOCKID10 LIKE '" + theFIPS + "%'"
+    myQry = "BLOCKID LIKE '" + theFIPS + "%'"
+    #arcpy.AddMessage("theRndPt:" + theRndPT)
+    #arcpy.AddMessage("myQry:" + myQry)
     arcpy.MakeFeatureLayer_management(theRndPT, myLyr, myQry)
     #create the overlay
     arcpy.AddMessage("      about to perform spatial join")
