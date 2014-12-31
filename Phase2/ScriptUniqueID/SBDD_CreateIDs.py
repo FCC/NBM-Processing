@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
 # SBDD_CreateIDs.py
-# Created on: May 16, 2011 
+# Created on: May 16, 2011
 # Created by: Michael Byrne
 # Federal Communications Commission
 # creates the unique ID for every table in the submission
@@ -16,7 +16,7 @@ import sys, string, os, math
 ##Global Variables
 ##these need changing every time
 ##theRound number increases by 1 every six months;
-##1 = delivered April 2010 
+##1 = delivered April 2010
 ##2 = delivered Oct 2010
 ##3 = delivered April 2011
 ##4 = delivered oct 2011
@@ -26,24 +26,22 @@ import sys, string, os, math
 ##8 = delivered October 2013
 ##9 = delivered April 2014
 ##10 = delivered October 2014
-theRound = 7
+theRound = 10
 ##theSubmission is the first, second, third submission from the state
 theSubmission = 1
 
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
-States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
+States = ["AK","AR","AS","AZ","CA","CO","CT"]          #1 "AL", failing add
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
-States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3 
-States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4 
+States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3
+States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-
-States = ["AS"]
 
 ##write out functions
 ##Function sbdd_ReturnFIPS returns the FIPSID for the State
@@ -181,15 +179,15 @@ def sbdd_CalcID (theFD, theFC):
     if theFC == "BB_Service_RoadSegment":
         theLCode = "5"
     if theFC == "BB_Service_Wireless":
-        theLCode = "6"        
+        theLCode = "6"
     if theFC == "BB_ConnectionPoint_LastMile":
-        theLCode = "7"        
+        theLCode = "7"
     if theFC == "BB_ConnectionPoint_MiddleMile":
         theLCode = "8"
     arcpy.DeleteField_management(theFD + theFC, ["SBDD_ID"])
     arcpy.AddField_management(theFD + theFC,"SBDD_ID", "TEXT", "","", "20")
     theExp = "'" + str(theRound) + "-" + str(theSubmission) + "-" + sbdd_IDField() + \
-             "-" + theLCode + "-" + "!OBJECTID!" + "'"   
+             "-" + theLCode + "-" + "!OBJECTID!" + "'"
     arcpy.CalculateField_management(theFD + theFC, "SBDD_ID", theExp, "PYTHON")
     del theExp, theLCode
     return ()
@@ -197,13 +195,13 @@ def sbdd_CalcID (theFD, theFC):
 #*******************************************************************************************************
 ##################Main Code below
 #*******************************************************************************************************
-try: 
+try:
     for theST in States:
         arcpy.AddMessage("the state is: " + theST)
         ##check to see if field is added, if not add it
         ##populate field
         theFD =  theLocation + theST + "/" + theST + "_SBDD_" + theYear + "_"
-        theFD = theFD + theMonth + "_" + theDay + ".gdb/NATL_Broadband_Map/"        
+        theFD = theFD + theMonth + "_" + theDay + ".gdb/NATL_Broadband_Map/"
         theFCs = ["BB_Service_Address", "BB_Service_CAInstitutions", "BB_Service_CensusBlock", \
                   "BB_Service_Overview", "BB_Service_RoadSegment", "BB_Service_Wireless", \
                   "BB_ConnectionPoint_LastMile", "BB_ConnectionPoint_MiddleMile"]
@@ -213,4 +211,4 @@ try:
 except:
     arcpy.AddMessage("Something bad happened")
 
-  
+
