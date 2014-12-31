@@ -15,26 +15,26 @@ import sys, string, os, math
 #write out global variables
 ##***************************************************************
 ##YOU NEED TO EDIT THESE NEXT LINES for the correct paths
-thePGDB = "C:/Users/michael.byrne/Processing.gdb"
+#thePGDB = "C:/Users/michael.byrne/Processing.gdb"
+thePGDB = "C:/work/nbbm/2014_2/chkResult/wlOverlay/Processing.gdb"
 arcpy.env.workspace = thePGDB
-theBlockGDB = "C:/Users/michael.byrne/Library/TabBlock_2010.gdb/"
-theoFilePre = "C:/Users/michael.byrne/wireless_overlay_"
+#theBlockGDB = "C:/Users/michael.byrne/Library/TabBlock_2010.gdb/"
+theBlockGDB = "C:/work/nbbm/2014_2/TabBlock_2010_10_2.gdb/"
+#theoFilePre = "C:/Users/michael.byrne/wireless_overlay_"
+theoFilePre = "C:/work/nbbm/2014_2/chkResult/wlOverlay/wireless_overlay_"
 ##***************************************************************
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
-States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
-States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
-States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3 
+States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] #1
+States = States+["DC","DE","FL","GA","GU","HI","IA","ID"] #2 
+States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3
 States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4 
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AS"]
-
-
 
 ##write out functions
 ##Function sbdd_ExportToShape exports the created layers to shapefiles in
@@ -47,13 +47,18 @@ def blockIntersect():
     theBlock = theBlockGDB + "Block_" + theST
     myCnt = 1
     if theCnt > 0:  #if there are records in the wireless shape class
+        #rows = arcpy.SearchCursor(theFD + "BB_Service_Wireless")
         rows = arcpy.SearchCursor(theFD + "BB_Service_Wireless")
         for row in rows: #while  < theCnt:
             myID = row.getValue("OBJECTID")
-            arcpy.AddMessage("     Performing overlay " + str(myCnt) + " of " + str(theCnt) + " and O-ID: " + str(myID))            
+            #arcpy.AddMessage("     Performing overlay " + str(myCnt) + " of " + str(theCnt) + " and O-ID: " + str(myID))            
             myQry = "TRANSTECH <> 60 AND OBJECTID = " + str(myID)
             myLyr = theST + "NotSatellite" + str(myCnt)
-            arcpy.MakeFeatureLayer_management (theFD + "BB_Service_Wireless", myLyr, myQry)
+            #arcpy.AddMessage("theFD=" + theFD)
+            #arcpy.AddMessage("myLyr=" + myLyr)
+            #arcpy.AddMessage("myQry=" + myQry)
+            #arcpy.MakeFeatureLayer_management (theFD + "BB_Service_Wireless", myLyr, myQry)
+            #arcpy.AddMessage("cnt=" + arcpy.GetCount_management(myLyr).getOutput(0))
             if int(arcpy.GetCount_management(myLyr).getOutput(0)) > 0:  #there are no records in myLyr, it is a satellite record
                 theOFC = "wireless_block_" + theST + "_" + str(myCnt)
                 theOFCP = "wireless_block_" + theST + "_" + str(myCnt) + "_prj"
@@ -61,7 +66,11 @@ def blockIntersect():
                 for myFC in myFCs:
                     if arcpy.Exists(myFC):
                         arcpy.Delete_management(myFC)
+                #arcpy.AddMessage("myLyr=" + myLyr)
+                #arcpy.AddMessage("theBlock=" + theBlock)
+                #arcpy.AddMessage("theOFC=" + theOFC)
                 arcpy.Intersect_analysis([myLyr, theBlock], theOFC)
+                #arcpy.AddMessage("after Intersect_analysis")
                 arcpy.Project_management(theOFC, theOFCP, "PROJCS['North_America_Albers_Equal_Area_Conic',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Albers'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',-96.0],PARAMETER['Standard_Parallel_1',20.0],PARAMETER['Standard_Parallel_2',60.0],PARAMETER['Latitude_Of_Origin',40.0],UNIT['Meter',1.0]]", "NAD_1983_To_WGS_1984_1", "GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]")
                 arcpy.AddField_management(theOFCP, "PCT" ,"DOUBLE", "5" , "2", "")
                 theExp = "([SHAPE_Area]) /( [ALAND10] + [AWATER10] )*100"
