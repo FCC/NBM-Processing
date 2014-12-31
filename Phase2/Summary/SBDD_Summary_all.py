@@ -16,9 +16,9 @@ from os import remove, close
 today = date.today()
 
 #global variables
-theOF = "C:/Users/NBMSource/Fall2011/"
-theLocation = "C:/Users/NBMSource/Fall2011/"
-theYear = "2011"
+theOF = "C:/work/nbbm/2014_2/chkResult/summary_all_files/"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
 theMonth = "10"
 theDay = "01"
 
@@ -28,7 +28,7 @@ States = States + ["IL","IN","KS","KY","LA","MA","MD","ME"] #3
 States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4 
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
-States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7 #VT
+States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
 
 #write out functions
 #Function sbdd_CountFC returns the record count of a FeatureClass
@@ -571,8 +571,10 @@ def sbdd_ReturnBHCap (theCode):
 ##***********Primary Code flow begins below
 try:
     for theST in States:
+        #theST = "CA"
         theFD = theLocation + theST + "/" + theST + "_SBDD_" + theYear + "_"
         theFD = theFD + theMonth + "_" + theDay + ".gdb/NATL_Broadband_Map"
+        #arcpy.AddMessage("the FD is: " + theFD)
 
         arcpy.AddMessage("the state is: " + theST)
         theFGDB = theFD.rstrip("NATL_Broadband_Map")
