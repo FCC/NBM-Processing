@@ -16,8 +16,13 @@ from arcpy import env
 import sys, string, os, math
 
 #Write out variables
-thePGDB = "C:/SpatialDATA/Spring2014/Processing2.gdb"
-theOF = "C:/SpatialDATA/Spring2014/export/Shape/"
+#thePGDB = "C:/SpatialDATA/Spring2014/Processing2.gdb"
+
+thePGDB = "C:/work/nbbm/2014_2/chkResult/ProcessingPhase4.gdb"
+
+#theOF = "C:/SpatialDATA/Spring2014/export/Shape/"
+theOF = "C:/work/nbbm/2014_2/chkResult/export/Shape/"
+
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -26,11 +31,11 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-##States = ["DC"]
+States = ['NE']
 
-theLocation = "C:/SpatialDATA/Spring2014/"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
 theYear = "2014"
-theMonth = "04"
+theMonth = "10"
 theDay = "01"
 
 doAddress = "No" #Yes
@@ -226,7 +231,7 @@ def sbdd_ProcessAddress (myFD, myFL):
                arcpy.RepairGeometry_management(outPT)                 
                arcpy.Delete_management(myFLName)                
                if int(arcpy.GetCount_management(outPT).getOutput(0)) > 50:
-                   arcpy.AddMessage("          processing by raster point: " + outPT)
+                   #arcpy.AddMessage("          processing by raster point: " + outPT)
                    #second covert the selection to a grid data set (e.g. raster)
                    arcpy.PointToRaster_conversion(outPT, "FRN", outRT, "", "", 0.0028) 
                    theH = arcpy.Describe(outRT).Height
@@ -255,7 +260,7 @@ def sbdd_ProcessAddress (myFD, myFL):
                        arcpy.CalculateField_management(inPly, "TRANSTECH", theTransTech, "PYTHON")
                        arcpy.CalculateField_management(inPly, "MAXADDOWN", "'" + theAdDown + "'" ,"PYTHON")
                        arcpy.CalculateField_management(inPly, "MAXADUP", "'" + theAdUp + "'" ,"PYTHON")
-                       arcpy.AddMessage("theProvider_type: " + str(theProviderType))
+                       #arcpy.AddMessage("theProvider_type: " + str(theProviderType))
                        if theTyDown <> "IsNull":
                            arcpy.CalculateField_management(inPly, "TYPICDOWN", "'" + theTyDown + "'" ,"PYTHON")
                        if theTyUp <> "IsNull":
@@ -263,7 +268,7 @@ def sbdd_ProcessAddress (myFD, myFL):
                        arcpy.CalculateField_management(inPly, "State", "'" + theST + "'" ,"PYTHON")
                        arcpy.CalculateField_management(inPly, "Provider_Type", theProviderType,"PYTHON")
                        arcpy.CalculateField_management(inPly, "ENDUSERCAT", "'" + theEndUserCat + "'" ,"PYTHON")
-                       arcpy.AddMessage("theProvider_type: " + str(theProviderType))
+                       #arcpy.AddMessage("theProvider_type: " + str(theProviderType))
                        arcpy.Buffer_analysis(inPly, bfPly, "100 Feet", "FULL", "ROUND", "LIST", theFields)
                        if myCnt == 1:  #this is the first time through, rename the bfPly to Address
                            arcpy.Rename_management(bfPly,"Address")
@@ -303,11 +308,19 @@ def sbdd_ExportToShape (myFC):
         arcpy.AddMessage("          Exporting " + myFC)
         if myFC == "Wireless":
             arcpy.DeleteField_management(myFC, "STATEABBR")
-            arcpy.DeleteField_management(myFC, "SBDD_ID")
+            #arcpy.DeleteField_management(myFC, "SBDD_ID")
         if myFC == "Address":
-            dropFields = ["ADDRESS","BLDGNBR","PREDIR","STREETNAME","STREETTYPE","SUFEDIR","CITY","STATECODE","ZIP5","ZIP4","LATITUDE","LONGITUDE","SBDD_ID"]
+            #dropFields = ["ADDRESS","BLDGNBR","PREDIR","STREETNAME","STREETTYPE","SUFEDIR","CITY","STATECODE","ZIP5","ZIP4","LATITUDE","LONGITUDE","SBDD_ID"]
+            dropFields = ["ADDRESS","BLDGNBR","PREDIR","STREETNAME","STREETTYPE","SUFEDIR","CITY","STATECODE","ZIP5","ZIP4","LATITUDE","LONGITUDE"]
             arcpy.DeleteField_management(myFC,dropFields)
+        #arcpy.AddMessage("myFC = " + myFC)
+        #arcpy.AddMessage("theOF = " + theOF)
+        
+
         arcpy.FeatureClassToShapefile_conversion(myFC, theOF + myFC)
+
+        #arcpy.AddMessage(theOF + myFC + "/" + myFC + ".shp")
+        #arcpy.AddMessage(theOF + myFC + "/" + theST + "_" + myFC + ".shp")
         arcpy.Rename_management(theOF + myFC + "/" + myFC + ".shp", theOF +
                                 myFC + "/" + theST + "_" + myFC + ".shp")
     del myFC
