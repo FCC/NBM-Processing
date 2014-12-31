@@ -1,0 +1,81 @@
+Processing Plan summary: These steps describe the intake processing stage, where the grantees deliver files for all the States, Territories, and DC and FCC staff perform checks, prepare datasets, and generate export files for the computech bbmap team and for the data downloads page. This process can take 4-6 weeks depending on problems encountered. It is useful to keep NTIA and bbmap team up to date on progress. 
+
+(tasks refer to detailed processing doc here: K:\Projects\Broadband Data\NBM\TechnicalDocumentation\DataIntegraion_ProcessingPlan) 
+
+PHASE 2: 
+
+1: Unzip and sort all the files to their proper locations on the K drive:
+ - Submission docs: K:\Projects\Broadband Data\NBM\DataReports
+ - Spatial data: K:\Projects\Broadband Data\NBM\SpatialData\Submissions 
+A new tracking.xls sheet should be updated to indicate all the files received for each state, resubmission status, and processing thoughout the phases. NTIA should receive this workbook.
+
+2a. Run SBDD_CheckBlock.py  to determine any invalid FIPS codes. Issues are reported to NTIA. 
+2b. Run SBDD_CheckSubmission_all.py and compare results against delivered receipts. Verify there are no FAILs, and scan through any exceptions that are not explained.  Also compare record counts in the FCC receipt, the grantee receipt and the data_package.xls
+
+3. Run SBDD_BusRules.py  to check for business rule violations. The output of the script is four .csv files which should be concatenated together and placed in a master excel sheet in the DataReports\(submission) folder.  Any business rules issues are noted with a record count. These have a quick cursory scan to look for issues, and a few example states can be investigated. The sheet is sent to NTIA. This step is largely outdated by an NTIA process. 
+
+4. Completed above.
+
+5. Check in with NTIA on resubmission status before proceeding. If reasonably confident data are at or near “acceptance” stage by NTIA, move on.
+
+6. Run SBDD_CleanData.py to remove blanks, nulls, and spaces from key fields. Here data are being changed for the first time, so file management is critical. Clean files must replace originals on the \Submissions folder. This script outputs 5 csv files for each state, which should be concatenate all together and update master excel sheet in the DataReports\(submission) folder. One trick for command line: 
+head -1 Address_CleanData_AK_201410.csv > ALL_Address_CleanData_201410.csv  
+awk 'FNR-1' Address_CleanData_*_201410.csv >> ALL_Address_CleanData_201410.csv  
+
+Numbers appearing in CleanData output indicate how many records were updated. Running CleanData a second time should show all passed.
+
+7. Run SBDD_CreateIDs.py script. This script creates the primary key for every record going forward for the remainder of the process. Be sure to set the round and submission variables. Once new SBDD_ids are generated, replace all files in the main \Submissions folder. Any resubmissions at this stage can have this script re-run, as long as it replaces the previous version of the spatial data. 
+
+8. Visual checks are sometimes done here in ArcMap. 
+
+9. Run SBDD_Summary_all.py to generate an overall report of the data submission. Output CSV’s are copied into a clean excel template second tab, and saved for that State/Terr. The will result in one excel sheet per state/terr. Copy to the \DataReports\(cycle)\SubmissionSummary folder. Once all are there, can update the overall Summary_StateSummaries.xls (copy from previous). 
+
+10. Run SBDD_Append_FRN_FRQ_FromSummary.py script to append the prov_frq tables left from the Summary script. This is the unique combination of Provider, DBA, FRN for each state. The script creates one table out of all of the state/terr tables. 
+
+10a. Send the output to Jeff at Baker and to the bbmap team to begin the HoCo table. 
+- NOTE: Last round Paul found carriage returns in three states: Chris fixed these manually: 
+ -- AT&T Corp Inc. in Colorado 
+-- IND CO Cable TV in Arkansas 
+-- Interlakes Wireless LLC in South Dakota 
+
+10b) Zip and Upload all fGDBs to Baker secure FTP (check with Jeff for details). These should be zipped in 7 batches of 8 states each (follow python script convention). 
+
+NOTE: Any resubmissions at this stage will require re-running steps and re-delivering to Baker and bbmap team.
+
+PHASE 3: This phase of processing performs the spatial overlays and creates the final exports for the bbmap team, and final data checks on on the feature classes. 
+
+1. skip
+2. skip
+3. done above
+4. done above
+
+5. HoCoNum process – draft excel sheet from bbmap team should be reviewed with 477 team (Ken Lynch is POC). Once complete, deliver to NTIA and request time to review/approve. 
+
+6. Run SBDD_Block_ExportTable.py script to create inputs to deliver to the bbmap team and the files which will be used for csv data downloads.
+
+7. Run the SBDD_RndPtOverlay.py script. The random point table is in the K:\Projects\Broadband Data\NBM\SpatialData\Library directory. Each year the table is regenerated using updated Housing Unit numbers by Binesh in AAC. Current fGBD is called Randon_Points_0914.gdb – the script will generate the data which will later be export tables for the bbmap team.  For an explanation of the Random Point process, see the document: Random Point.doc  in the K:\Co_share\OSP\spry\Projects Handoff\broadband map\ folder. 
+
+8. Run the Wireless block overlay and append. This process may take up to a week to complete. 
+
+8a. Run SBDD_Wireless_Block_Overlay.py script which will calculate the percent overlap of every submitted wireless poly on every block. The output tables are written to a processing.gdb
+
+8b. Run SBDD_Wireless_Block_Append.py script to prepare the tables which will be exported for the bbmap team.  The input for this process is the processing.gdb tables created in Step 8a and outputs to Processing_wireless.gdb 
+
+8c. Run SBDD_Wireless_Block_Check.py script to make sure no wireless data are missing. This compares the wireless tables in the Processing_wireless.gdb against the SBI submissions. 
+
+8d. Run SBDD_Export_WirelessOverlay.py to create the export csv for the bbmap team. Once these files are complete, transfer to the bbmap team. Exports from the Processing_wireless.gdb.
+
+9. Run SBDD_Check_CAI.py script to find any formatting errors before exporting. The bbmap team uses the shapefile exports in phase 4, we don’t export these as csv’s. 
+
+10. Run SBDD_Export_Address.py script to create the export csv for the bbmap team. 
+
+11. Run SBDD_Export_RndPoint.py to create the export csv for the bbmap team and for downloads. 
+
+PHASE 4: CREATE Spatial Layers
+
+Run SBDD_Create_Spatial_layers.py  to create the shapefiles used for the downloads on the broadband map and for bbmap geo team.  (NOTE: Chris updated this script to fix a bug last round). 
+
+It is useful at this point to review the document BBMap Data Matrix.xls to understand the relationship between all the files that we produce for download. Shape and CSV are very different when it comes to the Address / Road segment data. That document, produced by Paul Salasznyk is the best overview. The file is in the K:\Co_share\OSP\spry\Projects Handoff\broadband map\ folder. 
+
+Once all shape and csv file exports are complete, they should be packaged as download files. See current version of the site for folder template. Check with BBMap team and conduct careful checks that ALL fields in the CSV and shapefiles are accounted for in the readme file.  Review with NTIA the folder structure and contents, and once complete, deliver all files to NTIA to make available on their download server. FCC agreed last round to create the nationwide files as well as the state by state files – bbmap team can generate the nationwide files. 
+
