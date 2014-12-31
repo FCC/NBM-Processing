@@ -14,7 +14,8 @@ from arcpy import env
 import sys, string, os, math
 
 #global variables
-theOF = "C:/Users/michael.byrne/nbm/Export/BlockTable/"
+#theOF = "C:/Users/michael.byrne/nbm/Export/BlockTable/"
+theOF = "C:/work/nbbm/2014_2/chkResult/export/BlockTable/"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -23,11 +24,11 @@ States = States + ["MI","MN","MO","MS","MT","NC","ND","MP"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["HI"]
 
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 theSuffix = "_NBM-Block-" + theYear + "-" + theMonth + ".csv"
 
