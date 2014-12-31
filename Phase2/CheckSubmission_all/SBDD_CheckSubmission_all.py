@@ -55,9 +55,10 @@ from os import remove, close
 today = date.today()
 
 #acquire arguments
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+#theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
@@ -67,7 +68,6 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AS"]
 
 #set up variables
 myFlag = 0
@@ -101,6 +101,7 @@ def sbdd_qry (theFL, myFL, myQry, mySeverity):
 def sbdd_checkGeometry (thePre, myFL):
     #check to see if check geometry has been run, if has not, run it
     arcpy.AddMessage("     Checking geometry: " + myFL)
+    #arcpy.AddMessage("     theFD + thePre + myFL: " + theFD + thePre + myFL)
     geoCnt = int(arcpy.GetCount_management(theFD + thePre + myFL).getOutput(0))
     theFGDB = theFD.rstrip("NATL_Broadband_Map")
     if arcpy.Exists(theFGDB + myFL):
