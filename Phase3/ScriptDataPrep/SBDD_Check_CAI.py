@@ -12,7 +12,8 @@ from arcpy import env
 import sys, string, os, math
 
 #global variables
-theOF = "C:/Users/michael.byrne/NBM/2013_1/"
+#theOF = "C:/Users/michael.byrne/NBM/2013_1/"
+theOF = "C:/work/nbbm/2014_2/chkResult/chkCAI/"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"]          #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -22,9 +23,10 @@ States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7 
 
-theLocation = "C:/Users/michael.byrne/NBM/2013_1/"
-theYear = "2013"
-theMonth = "04"
+
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
 #Function sbdd_ascii - checks and replaces non-ascii characters
