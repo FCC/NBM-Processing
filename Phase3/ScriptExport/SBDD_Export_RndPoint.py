@@ -16,10 +16,15 @@ from os import remove, close
 today = date.today()
 
 #global variables
-theOF = "C:/Users/michael.byrne/NBM/Export/RndPoint/"
-theFGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb/"
+#theOF = "C:/Users/michael.byrne/NBM/Export/RndPoint/"
+theOF = "C:/work/nbbm/2014_2/chkResult/export/RndPoint/"
+
+#theFGDB = "C:/Users/michael.byrne/Processing_rndpt.gdb/"
+theFGDB = "C:/work/nbbm/2014_2/chkResult/RntPtOverlay/Processing_rndpt.gdb/"
+
 thePrefix = "RandomPoint_"
-theSuffix = "_NBM-RNDPoint-CSV-Dec-2012.csv"
+#theSuffix = "_NBM-RNDPoint-CSV-Dec-2012.csv"
+theSuffix = "_NBM-RNDPoint-CSV-Jun-2014.csv"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] #1
 States = States + ["DC","DE","FL","GA","GU","HI","IA","ID"] #2
@@ -82,7 +87,7 @@ try:
             myCnt = str(arcpy.GetCount_management(theTbl).getOutput(0))
             theStr = "     going to write out this many records for "
             theStr = theStr + theST + ": " + myCnt
-            arcpy.AddMessage(theStr)
+            #arcpy.AddMessage(theStr)
             sbdd_exportFile(theTbl, outFile)
             del outFile, myFile, myCnt
         else:
