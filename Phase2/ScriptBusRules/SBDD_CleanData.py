@@ -12,9 +12,9 @@ import sys, string, os, arcpy
 from arcpy import env
 
 #basic variabls
-theLocation = "C:/Users/michael.byrne/NBM/Spring2013/Data/"
-theYear = "2013"
-theMonth = "04"
+theLocation = "C:/work/nbbm/2014_2/gdb/"
+theYear = "2014"
+theMonth = "10"
 theDay = "01"
 
 States = ["AK","AL","AR","AS","AZ","CA","CO","CT"] #1
@@ -24,7 +24,7 @@ States = States + ["MI","MN","MO","MP","MS","MT","NC","ND"] #4
 States = States + ["NE","NH","NJ","NM","NV","NY","OH","OK"] #5
 States = States + ["OR","PA","PR","RI","SC","SD","TN","TX"] #6
 States = States + ["UT","VA","VI","VT","WA","WI","WV","WY"] #7
-States = ["AS"]
+
 
 ##
 ##******************************************************************************
@@ -40,6 +40,10 @@ def sbdd_qry (theFL, myFL, myQry, myField):
         arcpy.AddMessage("       Checking for unexpected values: " + myFL)
         #you will need to edits this to make the read in feature dbfs and make tableview
         #MakeTableView_management (in_table, out_view, {where_clause}, {workspace}, {field_info})
+        #arcpy.AddMessage("theFL: " + theFL)
+        #arcpy.AddMessage("myFL: " + myFL)
+        #arcpy.AddMessage("myQry: " + myQry)
+        
         arcpy.MakeFeatureLayer_management(theFL, myFL, myQry)
         myCnt = int(arcpy.GetCount_management(myFL).getOutput(0))
         if myCnt > 0: #exception occurred            
@@ -154,8 +158,8 @@ def sbdd_qryDef (myField):
           theQry = "PROVNAME like '% ' OR PROVNAME LIKE ' %'"
      if myField == "TRANSTECH_SPACE":
           theQry = "TRANSTECH like '% ' OR TRANSTECH LIKE ' %'"
-     if myField == "MAMAXADDOWN_SPACE":
-          theQry = "MAMAXADDOWN like '% ' OR MAXADDOWN LIKE ' %'"
+     if myField == "MAXADDOWN_SPACE":
+          theQry = "MAXADDOWN like '% ' OR MAXADDOWN LIKE ' %'"
      if myField == "MAXADUP_SPACE":
           theQry = "MAXADUP like '% ' OR MAXADUP LIKE ' %'"
      if myField == "TYPICDOWN_SPACE":
@@ -250,74 +254,172 @@ try:
                theCBStr = theST
                if arcpy.Exists(theFD + "/BB_Service_" + theLyr):
                     arcpy.AddMessage("     Begining checks on Feature Class: " + theLyr)
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                    if theLyr == "CensusBlock":
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_FULLFIPSID",
                                                     sbdd_qryDef("FULLFIPSID"), "FULLFIPSID")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_FRN",
                                                     sbdd_qryDef("FRN"), "FRN")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_PROVNAME",
                                                     sbdd_qryDef("PROVNAME"), "PROVNAME")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_DBANAME",
                                                     sbdd_qryDef("DBANAME"), "DBANAME")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_TRANSTECH",
                                                     sbdd_qryDef("TRANSTECH"), "TRANSTECH")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_MAXADDOWN",
                                                     sbdd_qryDef("MAXADDOWN"), "MAXADDOWN")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_MAXADUP",
                                                     sbdd_qryDef("MAXADUP"), "MAXADUP")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_TYPICDOWN",
                                                     sbdd_qryDef("TYPICDOWN"), "TYPICDOWN")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_TYPICUP",
                                                     sbdd_qryDef("TYPICUP"), "TYPICUP")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_STATEFIPS",
                                                     sbdd_qryDef("STATEFIPS"), "STATEFIPS")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_FRN_SPACE",
                                                     sbdd_qryDef("FRN_SPACE"), "FRN_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_FULLFIPSID_SPACE",
                                                     sbdd_qryDef("FULLFIPSID_SPACE"), "FULLFIPSID_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_DBAName_SPACE",
                                                     sbdd_qryDef("DBAName_SPACE"), "DBANAME_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_PROVNAME_SPACE",
                                                     sbdd_qryDef("PROVNAME_SPACE"), "PROVNAME_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
-                                                    theLyr + "_TRANSTECH_SPACE",
-                                                    sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
-                                                    theLyr + "_MAMAXADDOWN_SPACE",
-                                                    sbdd_qryDef("MAMAXADDOWN_SPACE"), "MAMAXADDOWN_SPACE")              
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    #theLyr + "_TRANSTECH_SPACE",
+                                                    #sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN_SPACE",
+                                                    sbdd_qryDef("MAXADDOWN_SPACE"), "MAXADDOWN_SPACE")              
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_MAXADUP_SPACE",
                                                     sbdd_qryDef("MAXADUP_SPACE"), "MAXADUP_SPACE")  
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_TYPICDOWN_SPACE",
                                                     sbdd_qryDef("TYPICDOWN_SPACE"), "TYPICDOWN_SPACE")
-                    theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                     theLyr + "_TYPICUP_SPACE",
                                                     sbdd_qryDef("TYPICUP_SPACE"), "TYPICUP_SPACE")
                     if theLyr == "Wireless":
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN",
+                                                    sbdd_qryDef("FRN"), "FRN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME",
+                                                    sbdd_qryDef("PROVNAME"), "PROVNAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBANAME",
+                                                    sbdd_qryDef("DBANAME"), "DBANAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TRANSTECH",
+                                                    sbdd_qryDef("TRANSTECH"), "TRANSTECH")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN",
+                                                    sbdd_qryDef("MAXADDOWN"), "MAXADDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP",
+                                                    sbdd_qryDef("MAXADUP"), "MAXADUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN",
+                                                    sbdd_qryDef("TYPICDOWN"), "TYPICDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP",
+                                                    sbdd_qryDef("TYPICUP"), "TYPICUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN_SPACE",
+                                                    sbdd_qryDef("FRN_SPACE"), "FRN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBAName_SPACE",
+                                                    sbdd_qryDef("DBAName_SPACE"), "DBANAME_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME_SPACE",
+                                                    sbdd_qryDef("PROVNAME_SPACE"), "PROVNAME_SPACE")
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    #theLyr + "_TRANSTECH_SPACE",
+                                                    #sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN_SPACE",
+                                                    sbdd_qryDef("MAXADDOWN_SPACE"), "MAXADDOWN_SPACE")              
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP_SPACE",
+                                                    sbdd_qryDef("MAXADUP_SPACE"), "MAXADUP_SPACE")  
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN_SPACE",
+                                                    sbdd_qryDef("TYPICDOWN_SPACE"), "TYPICDOWN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP_SPACE",
+                                                    sbdd_qryDef("TYPICUP_SPACE"), "TYPICUP_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_SPECTRUM",
                                                          sbdd_qryDef("SPECTRUM"), "SPECTRUM")                         
-                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
-                                                         theLyr + "_SPECTRUM_SPACE",
-                                                         sbdd_qryDef("SPECTRUM_SPACE"), "SPECTRUM_SPACE")
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                         #theLyr + "_SPECTRUM_SPACE",
+                                                         #sbdd_qryDef("SPECTRUM_SPACE"), "SPECTRUM_SPACE")
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_STATEABBR",
                                                          sbdd_qryDef("STATEABBR"), "STATEABBR")
+                         #arcpy.AddMessage("theCBStr: " + theCBStr)
                     if theLyr == "RoadSegment":
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN",
+                                                    sbdd_qryDef("FRN"), "FRN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME",
+                                                    sbdd_qryDef("PROVNAME"), "PROVNAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBANAME",
+                                                    sbdd_qryDef("DBANAME"), "DBANAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TRANSTECH",
+                                                    sbdd_qryDef("TRANSTECH"), "TRANSTECH")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN",
+                                                    sbdd_qryDef("MAXADDOWN"), "MAXADDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP",
+                                                    sbdd_qryDef("MAXADUP"), "MAXADUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN",
+                                                    sbdd_qryDef("TYPICDOWN"), "TYPICDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP",
+                                                    sbdd_qryDef("TYPICUP"), "TYPICUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN_SPACE",
+                                                    sbdd_qryDef("FRN_SPACE"), "FRN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBAName_SPACE",
+                                                    sbdd_qryDef("DBAName_SPACE"), "DBANAME_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME_SPACE",
+                                                    sbdd_qryDef("PROVNAME_SPACE"), "PROVNAME_SPACE")
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    #theLyr + "_TRANSTECH_SPACE",
+                                                    #sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN_SPACE",
+                                                    sbdd_qryDef("MAXADDOWN_SPACE"), "MAXADDOWN_SPACE")              
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP_SPACE",
+                                                    sbdd_qryDef("MAXADUP_SPACE"), "MAXADUP_SPACE")  
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN_SPACE",
+                                                    sbdd_qryDef("TYPICDOWN_SPACE"), "TYPICDOWN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP_SPACE",
+                                                    sbdd_qryDef("TYPICUP_SPACE"), "TYPICUP_SPACE")
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_STATECODE",
                                                          sbdd_qryDef("STATECODE"), "STATECODE")                         
@@ -326,12 +428,78 @@ try:
                                                          sbdd_qryDef("STATECODE_SPACE"), "STATECODE_SPACE")
                     if theLyr == "Address":
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FULLFIPSID",
+                                                    sbdd_qryDef("FULLFIPSID"), "FULLFIPSID")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN",
+                                                    sbdd_qryDef("FRN"), "FRN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME",
+                                                    sbdd_qryDef("PROVNAME"), "PROVNAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBANAME",
+                                                    sbdd_qryDef("DBANAME"), "DBANAME")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TRANSTECH",
+                                                    sbdd_qryDef("TRANSTECH"), "TRANSTECH")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN",
+                                                    sbdd_qryDef("MAXADDOWN"), "MAXADDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP",
+                                                    sbdd_qryDef("MAXADUP"), "MAXADUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN",
+                                                    sbdd_qryDef("TYPICDOWN"), "TYPICDOWN")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP",
+                                                    sbdd_qryDef("TYPICUP"), "TYPICUP")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FRN_SPACE",
+                                                    sbdd_qryDef("FRN_SPACE"), "FRN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FULLFIPSID_SPACE",
+                                                    sbdd_qryDef("FULLFIPSID_SPACE"), "FULLFIPSID_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_DBAName_SPACE",
+                                                    sbdd_qryDef("DBAName_SPACE"), "DBANAME_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_PROVNAME_SPACE",
+                                                    sbdd_qryDef("PROVNAME_SPACE"), "PROVNAME_SPACE")
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    #theLyr + "_TRANSTECH_SPACE",
+                                                    #sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADDOWN_SPACE",
+                                                    sbdd_qryDef("MAXADDOWN_SPACE"), "MAXADDOWN_SPACE")              
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_MAXADUP_SPACE",
+                                                    sbdd_qryDef("MAXADUP_SPACE"), "MAXADUP_SPACE")  
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICDOWN_SPACE",
+                                                    sbdd_qryDef("TYPICDOWN_SPACE"), "TYPICDOWN_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TYPICUP_SPACE",
+                                                    sbdd_qryDef("TYPICUP_SPACE"), "TYPICUP_SPACE")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_STATECODE",
                                                          sbdd_qryDef("STATECODE"), "STATECODE")                         
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_STATECODE_SPACE",
                                                          sbdd_qryDef("STATECODE_SPACE"), "STATECODE_SPACE")                      
                     if theLyr == "CAInstitutions":
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FULLFIPSID",
+                                                    sbdd_qryDef("FULLFIPSID"), "FULLFIPSID")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_TRANSTECH",
+                                                    sbdd_qryDef("TRANSTECH"), "TRANSTECH")
+                         theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    theLyr + "_FULLFIPSID_SPACE",
+                                                    sbdd_qryDef("FULLFIPSID_SPACE"), "FULLFIPSID_SPACE")
+                         #theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
+                                                    #theLyr + "_TRANSTECH_SPACE",
+                                                    #sbdd_qryDef("TRANSTECH_SPACE"), "TRANSTECH_SPACE")
                          theCBStr = theCBStr + sbdd_qry (theFD + "/BB_Service_" + theLyr,
                                                          theLyr + "_STATECODE",
                                                          sbdd_qryDef("STATECODE"), "STATECODE")                         
